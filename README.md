@@ -5,7 +5,7 @@ KNIME_metanodes repository contains metanodes for [KNIME](https://www.knime.com/
 We try to make KNIME metanodes with the following guidelines in mind:
 - metanodes should be easy to be used also by the user with no programming/scripting skills
 - metanodes are made to be generally applicable to almost any wide format data table
-- metanodes aim to make more complicated things in KNIME easier and reproducible together with the KNIME workflows
+- metanodes aim to make more complicated operations in KNIME easier and reproducible together with the KNIME workflows
 - metanodes utilize open-source tools and programs (their list should be mentioned in the metanode description) 
 - utilize in-build KNIME nodes where possible
 - metanodes should be documented
@@ -41,7 +41,7 @@ To use the metanodes in your KNIME workflow follow these steps:
 
 ## List of used programs and extensions and the respective licences
 
-Metanodes are made within docker container running KNIME accessible via VNC (https://github.com/OmicsWorkflows/KNIME_docker_vnc). The current version of the docker environment contains the following list of programs. Version numbers and the licenses (see below) might differ based on your local installation. Please inspect your local installation and contact us if you can not locate your local version and or license terms associated to the used metanode(s).
+Metanodes are made within docker container running KNIME accessible via VNC (https://github.com/OmicsWorkflows/KNIME_docker_vnc). The current version of the docker environment contains the following list of programs. Version numbers and the licenses might differ based on your local installation. Please inspect your local installation and contact us if you can not locate your local version and or license terms associated to the used metanode(s).
 
 ##### Programs
 
@@ -61,7 +61,7 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
 - PIA 1.3.7 (de.mpc.pia.feature.feature.group/1.3.7.v201803061425)
     - The PIA consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
 
-##### python packages
+##### Python 3 packages
 - numpy 1.15.1
     - The numpy consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
 - pandas 0.23.4
@@ -97,7 +97,7 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
 ## Do you have a question or wants to get involved?
 The project is maintained by people from several laboratories (see below), but each metanode has 'contact person' who should be contacted first in case of any question. You can also [create an issue here](https://github.com/OmicsWorkflows/KNIME_metanodes/issues/new).
 
-If you want to contribute to the project, contact us at david.potesil@ceitec.muni.cz 
+If you want to contribute to the project, contact us at david.potesil@ceitec.muni.cz.
 
 ### Code of Conduct
 This project and everyone participating in it is governed by the [Code of Conduct](../blob/master/code-of-conduct.md). By participating, you are expected to uphold this code. Please report any unacceptable behavior.
@@ -105,9 +105,9 @@ This project and everyone participating in it is governed by the [Code of Conduc
 # Contributors
 
 The project is maintained by people from several laboratories (in alphabetical order):
-- [Laboratory of cellular communication](http://www.sci.muni.cz/bryjalab/), Department of Experimental Biology, Faculty of Science, Brno, Czech Republic 
+- [Laboratory of cellular communication](http://www.sci.muni.cz/bryjalab/), Department of Experimental Biology, Faculty of Science, Masaryk University, Brno, Czech Republic 
   - Kristína Gömöryová
-- [Proteomics - Zbyněk Zdráhal Research group](https://www.ceitec.eu/proteomics-zbynek-zdrahal/rg49), CEITEC-MU, Brno, Czech Republic
+- [Proteomics Research group](https://www.ceitec.eu/proteomics-zbynek-zdrahal/rg49), Central European Institute of Technology, Masaryk University, Brno, Czech Republic
   - David Potěšil
 
 # Licence
