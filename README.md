@@ -2,7 +2,7 @@
 KNIME_metanodes repository contains metanodes for [KNIME](https://www.knime.com/) analytics platform for various tasks like data processing, visualization and evaluation.
 
 ## Metanodes preparation guidelines
-We try to make KNIME metanodes with the following guidelines in mind:
+We make the KNIME metanodes with the following guidelines in mind:
 - metanodes should be easy to be used also by the user with no programming/scripting skills
 - metanodes are made to be generally applicable to almost any wide format data table
 - metanodes aim to make more complicated operations in KNIME easier and reproducible together with the KNIME workflows
@@ -43,55 +43,55 @@ To use the metanodes in your KNIME workflow follow these steps:
 
 Metanodes are made within docker container running KNIME accessible via VNC (https://github.com/OmicsWorkflows/KNIME_docker_vnc). The current version of the docker environment contains the following list of programs. Version numbers and the licenses might differ based on your local installation. Please inspect your local installation and contact us if you can not locate your local version and or license terms associated to the used metanode(s).
 
-##### Programs
+#### Programs
 
-- KNIME 3.6.1 (https://www.knime.com/)
+- [KNIME](https://www.knime.com/) 3.6.1
   - The KNIME nodes consists of the following GNU GPL 3.0 License. Licence terms are available here: https://www.knime.com/downloads/full-license
-- Python 3.6.5 (https://www.python.org/)
+- [Python](https://www.python.org/) 3.6.5
   - The Python consists of the following Python 3.6 License. Licence terms are available here: https://docs.python.org/3.6/license.html
-- R 3.4.4 (https://www.r-project.org/)
+- [R](https://www.r-project.org/) 3.4.4
   - The R consists of the following GNU General Public Licences. Licence terms are available here: https://www.r-project.org/Licenses/
 
-##### KNIME extensions on top of the standard KNIME Analytics Platform installation
+#### KNIME extensions on top of the standard KNIME Analytics Platform installation
 
 - KNIME Python Integration (org.knime.features.python2.feature.group/3.6.1.v201808311614)
 - KNIME Interactive R Statistics Integration (org.knime.features.r.feature.group/3.6.1.v201808311614)
-- OpenMS 2.3.0 (de.openms.feature.feature.group/2.3.0.201712211252)
+- [OpenMS](http://www.openms.de/) 2.3.0 (de.openms.feature.feature.group/2.3.0.201712211252)
     - The OpenMS consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
-- PIA 1.3.7 (de.mpc.pia.feature.feature.group/1.3.7.v201803061425)
+- [PIA](https://github.com/mpc-bioinformatics/pia) 1.3.7 (de.mpc.pia.feature.feature.group/1.3.7.v201803061425)
     - The PIA consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
 
-##### Python 3 packages
-- numpy 1.15.1
+#### Python 3 packages
+- [numpy](http://www.numpy.org/) 1.15.1
     - The numpy consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
-- pandas 0.23.4
+- [pandas](https://pandas.pydata.org/) 0.23.4
     - The pandas consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
-- seaborn 0.9.0
+- [seaborn](https://seaborn.pydata.org/) 0.9.0
     - The seaborn consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
-- statsmodels 0.9.0
+- [statsmodels](https://www.statsmodels.org/stable/index.html) 0.9.0
     - The statsmodels consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
-- matplotlib 2.2.3
+- [matplotlib](https://matplotlib.org/) 2.2.3
     - The matplotlib consists of the following Python Software Foundation License (BSD compatible). Licence terms are available here: https://matplotlib.org/users/license.html
-- scipy 1.1.0
+- [scipy](https://www.scipy.org/) 1.1.0
     - The scipy consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
 
-##### R libraries
+#### R libraries
 
-- Rserve
+- [Rserve](https://cran.r-project.org/web/packages/Rserve/index.html)
     - The Rserve consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
-- preprocessCore
+- [preprocessCore](https://www.bioconductor.org/packages/release/bioc/html/preprocessCore.html)
     - The preprocessCore consists of the following GNU Library General Public (LGPL) License, version 2 (or higher) license. Licence terms are available here: https://www.r-project.org/Licenses/LGPL-2
-- limma
+- [limma](https://bioconductor.org/packages/release/bioc/html/limma.html)
     - The limma consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
-- Biobase
+- [Biobase](https://bioconductor.org/packages/release/bioc/html/Biobase.html)
     - The Biobase consists of the following Artistic-2.0 license. Licence terms are available here: https://opensource.org/licenses/Artistic-2.0
-- vsn
+- [vsn](https://bioconductor.org/packages/release/bioc/html/vsn.html)
     - The vsn consists of the following Artistic-2.0 license. Licence terms are available here: https://opensource.org/licenses/Artistic-2.0
-- pcaMethods
+- [pcaMethods](https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html)
     - The pcaMethods consists of the following General Public License (GPL), version 3 (or higher) license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3
-- impute
+- [impute](http://www.bioconductor.org/packages/release/bioc/html/impute.html)
     - The impute consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
-- imp4p
+- [imp4p](https://cran.r-project.org/web/packages/imp4p/index.html)
     - The imp4p consists of the following General Public License (GPL), version 3 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3
 
 ## Do you have a question or wants to get involved?
@@ -100,7 +100,7 @@ The project is maintained by people from several laboratories (see below), but e
 If you want to contribute to the project, contact us at david.potesil@ceitec.muni.cz.
 
 ### Code of Conduct
-This project and everyone participating in it is governed by the [Code of Conduct](../blob/master/code-of-conduct.md). By participating, you are expected to uphold this code. Please report any unacceptable behavior.
+This project and everyone participating in it is governed by the [Code of Conduct](../master/code-of-conduct.md). By participating, you are expected to uphold this code. Please report any unacceptable behavior.
 
 # Contributors
 
@@ -111,4 +111,4 @@ The project is maintained by people from several laboratories (in alphabetical o
   - David Potěšil
 
 # Licence
-This version of metanodes is available under the GNU GPL 3.0 License, unless stated otherwise. The full version of the license terms is available at https://www.gnu.org/licenses/gpl.html .
+This version of metanodes is available under the GNU GPL 3.0 License (see the [LICENSE](../master/LICENSE) file for details), unless stated otherwise.
