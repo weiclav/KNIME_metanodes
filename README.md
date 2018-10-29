@@ -93,6 +93,8 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
     - The impute consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
 - [imp4p](https://cran.r-project.org/web/packages/imp4p/index.html)
     - The imp4p consists of the following General Public License (GPL), version 3 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3
+- [UpSetR](https://cran.r-project.org/web/packages/UpSetR/index.html)
+    - The UpSetR consists of the following MIT license. Licence terms are available here: https://cran.r-project.org/web/licenses/MIT
 
 ## Do you have a question or wants to get involved?
 The project is maintained by people from several laboratories (see below), but each metanode has 'contact person' who should be contacted first in case of any question. You can also [create an issue here](https://github.com/OmicsWorkflows/KNIME_metanodes/issues/new).
