@@ -288,12 +288,6 @@
 <config key="connections">
 <config key="connection_0">
 <entry key="sourceID" type="xint" value="173"/>
-<entry key="destID" type="xint" value="306"/>
-<entry key="sourcePort" type="xint" value="1"/>
-<entry key="destPort" type="xint" value="1"/>
-</config>
-<config key="connection_1">
-<entry key="sourceID" type="xint" value="173"/>
 <entry key="destID" type="xint" value="848"/>
 <entry key="sourcePort" type="xint" value="1"/>
 <entry key="destPort" type="xint" value="1"/>
@@ -306,6 +300,12 @@
 <entry key="1" type="xint" value="320"/>
 </config>
 </config>
+</config>
+<config key="connection_1">
+<entry key="sourceID" type="xint" value="173"/>
+<entry key="destID" type="xint" value="306"/>
+<entry key="sourcePort" type="xint" value="1"/>
+<entry key="destPort" type="xint" value="1"/>
 </config>
 <config key="connection_2">
 <entry key="sourceID" type="xint" value="295"/>

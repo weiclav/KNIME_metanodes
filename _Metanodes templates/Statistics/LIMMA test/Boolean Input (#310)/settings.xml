@@ -7,7 +7,7 @@
 </config>
 <config key="model">
 <config key="defaultValue">
-<entry key="boolean" type="xboolean" value="false"/>
+<entry key="boolean" type="xboolean" value="true"/>
 </config>
 <entry key="label" type="xstring" value="Treat comparisons separately?"/>
 <entry key="description" type="xstring" value="whether to evaluate and report each comparison separately or all together as one factor (i.e. one-way ANOVA) - see the note on missing values handling!"/>
