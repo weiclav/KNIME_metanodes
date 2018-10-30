@@ -11,7 +11,7 @@
 </config>
 <entry key="label" type="xstring" value="Suffix to remove"/>
 <entry key="description" type="xstring" value="common data columns suffix to be removed prior plotting"/>
-<entry key="hideInWizard" type="xboolean" value="false"/>
+<entry key="hideInWizard" type="xboolean" value="true"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
 <entry key="required" type="xboolean" value="true"/>
 <entry key="parameterName" type="xstring" value="string-input"/>
