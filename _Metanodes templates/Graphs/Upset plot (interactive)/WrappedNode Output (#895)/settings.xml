@@ -51,7 +51,6 @@
 </config>
 </config>
 <entry key="variable-prefix" type="xstring" isnull="true" value=""/>
-<entry key="sub-node-description" type="xstring" isnull="true" value=""/>
 <config key="port-names">
 <entry key="array-size" type="xint" value="1"/>
 <entry key="0" type="xstring" value="output table"/>

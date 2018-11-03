@@ -41,7 +41,7 @@ To use the metanodes in your KNIME workflow follow these steps:
 
 ## List of used programs and extensions and the respective licences
 
-Metanodes are made within docker container running KNIME accessible via VNC (https://github.com/OmicsWorkflows/KNIME_docker_vnc). The current version of the docker environment contains the following list of programs. Version numbers and the licenses might differ based on your local installation. Please inspect your local installation and contact us if you can not locate your local version and or license terms associated to the used metanode(s).
+Metanodes are made within docker container running KNIME accessible via VNC (https://github.com/OmicsWorkflows/KNIME_docker_vnc). The current version of the docker environment contains the following list of programs. Version numbers and the licenses might differ based on your local installation. Please inspect your local installation and contact us if you can not locate your local version and or license terms associated to the used metanode(s). Some applications may be provided to the metanodes separately, these are mentioned in Other applications section.  
 
 #### Programs
 
@@ -94,7 +94,14 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
 - [imp4p](https://cran.r-project.org/web/packages/imp4p/index.html)
     - The imp4p consists of the following General Public License (GPL), version 3 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3
 - [UpSetR](https://cran.r-project.org/web/packages/UpSetR/index.html)
-    - The UpSetR consists of the following MIT license. Licence terms are available here: https://cran.r-project.org/web/licenses/MIT
+    - UpSet application (https://caleydo.org/tools/upset/) (The UpSet application consist of the following MIT license. Licence terms are available here: https://github.com/VCG/upset/blob/master/LICENSE)
+
+#### Other applications
+
+- [UpSet](http://vcg.github.io/upset/about/)
+  - Local copy of the project is under the Applications subfolder.
+  - The UpSet application consists of the following MIT license. Licence terms are available here: https://github.com/VCG/upset/blob/master/LICENSE
+
 
 ## Do you have a question or wants to get involved?
 The project is maintained by people from several laboratories (see below), but each metanode has 'contact person' who should be contacted first in case of any question. You can also [create an issue here](https://github.com/OmicsWorkflows/KNIME_metanodes/issues/new).
