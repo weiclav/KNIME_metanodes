@@ -38,6 +38,7 @@ To use the metanodes in your KNIME workflow follow these steps:
 
 ## General metanodes features
 - metanodes are versioned individually
+   - versioning is done based on https://semver.org/
 
 ## List of used programs and extensions and the respective licences
 
