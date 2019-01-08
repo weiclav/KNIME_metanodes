@@ -118,6 +118,7 @@ The project is maintained by people from several laboratories (in alphabetical o
 - [Laboratory of cellular communication](http://www.sci.muni.cz/bryjalab/), Department of Experimental Biology, Faculty of Science, Masaryk University, Brno, Czech Republic 
   - Kristína Gömöryová
 - [Proteomics Research group](https://www.ceitec.eu/proteomics-zbynek-zdrahal/rg49), Central European Institute of Technology, Masaryk University, Brno, Czech Republic
+  - Michal Cupák
   - David Potěšil
 
 # Licence
