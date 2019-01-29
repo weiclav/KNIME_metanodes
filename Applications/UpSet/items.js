@@ -127,7 +127,8 @@ function plotSelectedItems( elementId, selection ) {
                 });
 
     var rows = tbody.selectAll("tr")
-            .data(selection.items.slice(0,100))
+            // .data(selection.items.slice(0,100))
+            .data(selection.items)
         .enter()
             .append("tr")
             .each(function(d,i) {

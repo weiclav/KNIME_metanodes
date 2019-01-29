@@ -70,7 +70,7 @@ var levelOneGroups;
 var filterGroups;
 
 /** How many sets do we want to see by default */
-var nrDefaultSets = 6;
+var nrDefaultSets = 20;
 
 /**
  * The base element for all rows (sets, groups, subsets, aggregates)
