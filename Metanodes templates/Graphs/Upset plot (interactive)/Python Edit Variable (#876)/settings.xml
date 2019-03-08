@@ -14,6 +14,8 @@
 <entry key="sentinelOption" type="xstring" value="MIN_VAL"/>
 <entry key="sentinelValue" type="xint" value="0"/>
 <entry key="chunkSize" type="xint" value="500000"/>
+<entry key="python2Command" type="xstring" value=""/>
+<entry key="python3Command" type="xstring" value=""/>
 </config>
 <config key="nodeAnnotation">
 <entry key="text" type="xstring" value="creates variable that %%00010holds number of columns %%00010of dataframe for binary conversion"/>
@@ -36,11 +38,11 @@
 <entry key="node-bundle-name" type="xstring" value="KNIME Python nodes"/>
 <entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.python2.nodes"/>
 <entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
-<entry key="node-bundle-version" type="xstring" value="3.6.1.v201808311614"/>
+<entry key="node-bundle-version" type="xstring" value="3.7.0.v201811291930"/>
 <entry key="node-feature-name" type="xstring" value="KNIME Python Integration"/>
 <entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.python2.feature.group"/>
 <entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
-<entry key="node-feature-version" type="xstring" value="3.6.1.v201808311614"/>
+<entry key="node-feature-version" type="xstring" value="3.7.0.v201812041252"/>
 <config key="factory_settings"/>
 <entry key="name" type="xstring" value="Python Edit Variable"/>
 <entry key="hasContent" type="xboolean" value="false"/>
