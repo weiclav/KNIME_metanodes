@@ -103,6 +103,10 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
   - Local copy of the project is under the Applications subfolder.
   - The UpSet application consists of the following MIT license. Licence terms are available here: https://github.com/VCG/upset/blob/master/LICENSE
 
+- [UniProt API](https://www.uniprot.org/help/api)
+  - selected API of the UniProt knowledge database are utilized
+  - The UniProt API consists of the following Creative Commons Attribution (CC BY 4.0) License. Licence terms are available here: http://creativecommons.org/licenses/by/4.0/
+
 
 ## Do you have a question or wants to get involved?
 The project is maintained by people from several laboratories (see below), but each metanode has 'contact person' who should be contacted first in case of any question. You can also [create an issue here](https://github.com/OmicsWorkflows/KNIME_metanodes/issues/new).
