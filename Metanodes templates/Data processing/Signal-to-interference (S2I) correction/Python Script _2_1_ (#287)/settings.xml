@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<entry key="sourceCode" type="xstring" value="# calculates corrected values from the selected columns using selected column%%00010# containing signal to interference (S2I) ratio%%00010# (1 = no interference; 0 = complete interference)%%00010# %%00010# median values (or other if selected) in all columns are used as the estimate of interference %%00010# values - in case grouping column(s) is selectred, median is calculated groupwise%%00010# %%00010# correction is done by subtacting 'median' interference value for each channel, %%00010# multiplied by the (1-S2I) factor for the given PSMs%%00010# %%00010# negative values after the correction are replaced by specified value%%00010%%00010# based on S2I correction as published here:%%00010# 1.Savitski, M. M. et al. Measuring and Managing Ratio Compression for %%00010# Accurate iTRAQ/TMT Quantification. J. Proteome Res. 12, 3586–3598 (2013).%%00010%%00010import pandas%%00010import numpy%%00010%%00010# reads input tables and creates teble containing both inputs%%00010S2I_grouping_data = input_table_1%%00010input_data = input_table_2%%00010%%00010#input_data_scaled = input_data%%00010%%00010%%00010# gets rows sums%%00010rows_statistics = input_data.sum(axis=1)%%00010%%00010# divides each row value in dataframe by the actual row values sum%%00010input_data_scaled = (input_data.T / rows_statistics).T%%00010%%00010all_input_data = pandas.concat([S2I_grouping_data, input_data_scaled], axis=1)%%00010%%00010## get names of columns as lists for all 3 column types (S2I, grouping and data columns)%%00010# S2I column%%00010S2I_column_name = flow_variables['S2I_column']%%00010%%00010# grouping column(s) in case the input_table_1 contains more than 1 column%%00010if len(S2I_grouping_data.columns) &gt; 1:%%00010%%00009grouping_columns_list = list(S2I_grouping_data.iloc[:,1:].columns.values)%%00010elif len(S2I_grouping_data.columns) == 1:%%00010%%00009grouping_columns_list = []%%00010else:%%00010%%00009raise ValueError('Not expected number of columns in input_table_1. One or more colums expected.')%%00010%%00010# names of all data columns%%00010data_columns = list(input_table_2.columns.values)%%00010%%00010# sets replacement value instead of negative values in the dataframe after subtracting interference dataframe%%00010if flow_variables['minimum_replacement_method'] == 'NaN':%%00010%%00009minimum_value_replacement = numpy.nan%%00010elif flow_variables['minimum_replacement_method'] == 'zero':%%00010%%00009minimum_value_replacement = 0%%00010else:%%00010%%00009raise ValueError('Not expected value to be used for imputation of negative values after S2I correction.')%%00010%%00010# just for QC%%00010#S2I = data.iloc[:,0]%%00010#I2S = 1 - data.iloc[:,0]%%00010#data_columns = data.iloc[:,1:]%%00010#data_columns_medians = data.iloc[:,1:].median()%%00010#data_columns_medians_sum = data_columns_medians.sum()%%00010#data_columns_medians_normalized = data_columns_medians.divide(data_columns_medians.sum())%%00010#data_columns_medians_normalized_sum = data_columns_medians_normalized.sum()%%00010%%00010# extracts S2I data from the whole dataframe and calculates interference-to-signal (I2S) ratio (1-S2I)%%00010S2I_data = all_input_data.loc[:,S2I_column_name]%%00010I2S_data = 1 - S2I_data%%00010%%00010def S2I_correction(dataframe, S2I_column_name, data_columns_list):%%00010%%00009# medians in individual data columns to get 'expected' abundances of 'average' contaminant%%00010%%00009data_columns_medians = dataframe.loc[:,data_columns_list].median()%%00010%%00009%%00010%%00009# medians normalzied on the sum, i.e. their sum equals to 1.000%%00010%%00009data_columns_medians_normalized = data_columns_medians.divide(data_columns_medians.sum())%%00010%%00009%%00010%%00009# extracts S2I column from original dataframe and subtracts each value from 1 to get interference ratio to signal%%00010%%00009# this results in I2S data column%%00010%%00009I2S_data = 1 - dataframe.loc[:, S2I_column_name]%%00010%%00009%%00010%%00009# I2S is used to get expected interference intensities for each PSMs based on median TMT channels intensities%%00010%%00009# I2S is pandas series and need to be transformed (using 'T' function) so it will create expected vector or interference intensities for all PSMs%%00010%%00009interefernce_abundances = I2S_data.T.apply(lambda col: col*data_columns_medians_normalized)%%00010%%00009%%00010%%00009## calculates corrected abundances by subtracting exected interference abundances from original abundances%%00010%%00009corrected_abundances = dataframe.loc[:,data_columns] - interefernce_abundances%%00010%%00009%%00010%%00009return corrected_abundances%%00010%%00010### S2I correction in case there is no grouping column selected%%00010if grouping_columns_list == []:%%00010%%00009S2I_corrected_data = S2I_correction(all_input_data, S2I_column_name=S2I_column_name, data_columns_list=data_columns)%%00010%%00010### S2I correction in case there is/are grouping column(s) selected%%00010else:%%00010%%00009# imputes values using the specified function in each group within a grouped dataframe%%00010%%00009S2I_corrected_data = all_input_data.groupby(grouping_columns_list).apply(lambda group: S2I_correction(group, S2I_column_name=S2I_column_name, data_columns_list=data_columns))%%00010%%00010# replacement of negative values%%00010def replace_negative_value (value):%%00010    if value &lt;flow_variables['S2Icorr_min']:%%00010   %%00009    return minimum_value_replacement%%00010    else:%%00010        return value%%00010%%00010# replaces negative values by specified value%%00010corrected_abundances_minus_replaced = S2I_corrected_data.applymap(replace_negative_value)%%00010%%00010output_table = corrected_abundances_minus_replaced%%00010"/>
+<entry key="rowLimit" type="xint" value="1000"/>
+<entry key="pythonVersionOption" type="xstring" value="PYTHON3"/>
+<entry key="convertMissingToPython" type="xboolean" value="false"/>
+<entry key="convertMissingFromPython" type="xboolean" value="false"/>
+<entry key="sentinelOption" type="xstring" value="MIN_VAL"/>
+<entry key="sentinelValue" type="xint" value="0"/>
+<entry key="chunkSize" type="xint" value="500000"/>
+<entry key="python2Command" type="xstring" value=""/>
+<entry key="python3Command" type="xstring" value=""/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="IDLE"/>
+<entry key="factory" type="xstring" value="org.knime.python2.nodes.script2in1out.Python2Script2In1OutNodeFactory"/>
+<entry key="node-name" type="xstring" value="Python Script (2⇒1)"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME Python nodes"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.python2.nodes"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="3.7.0.v201811291930"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Python Integration"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.python2.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="3.7.0.v201812041252"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="Python Script (2⇒1)"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>
