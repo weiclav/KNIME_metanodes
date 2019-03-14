@@ -5,13 +5,35 @@
 <config key="internal_node_subsettings">
 <entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
 </config>
-<config key="model"/>
+<config key="model">
+<config key="dataTableColumn_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_string"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="dataTableColumn">
+<entry key="useRowID" type="xboolean" value="true"/>
+<entry key="columnName" type="xstring" isnull="true" value=""/>
+</config>
+<config key="referenceTableColumn_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_string"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="referenceTableColumn">
+<entry key="useRowID" type="xboolean" value="true"/>
+<entry key="columnName" type="xstring" isnull="true" value=""/>
+</config>
+<config key="inexclude_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_string"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="inexclude" type="xstring" value="Include rows from reference table"/>
+</config>
 <config key="nodeAnnotation">
-<entry key="text" type="xstring" value="gets dimesion of %%00010dataframe to be used for %%00010binary matrix computation"/>
+<entry key="text" type="xstring" value="filters out rows not %%00010present in the binary %%00010matrix table"/>
 <entry key="bgcolor" type="xint" value="16777215"/>
-<entry key="x-coordinate" type="xint" value="1025"/>
-<entry key="y-coordinate" type="xint" value="299"/>
-<entry key="width" type="xint" value="150"/>
+<entry key="x-coordinate" type="xint" value="737"/>
+<entry key="y-coordinate" type="xint" value="959"/>
+<entry key="width" type="xint" value="126"/>
 <entry key="height" type="xint" value="51"/>
 <entry key="alignment" type="xstring" value="CENTER"/>
 <entry key="borderSize" type="xint" value="0"/>
@@ -22,8 +44,8 @@
 </config>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
 <entry key="state" type="xstring" value="IDLE"/>
-<entry key="factory" type="xstring" value="org.knime.base.node.util.extracttabledimension.ExtractTableDimensionNodeFactory"/>
-<entry key="node-name" type="xstring" value="Extract Table Dimension"/>
+<entry key="factory" type="xstring" value="org.knime.base.node.preproc.filter.rowref.RowFilterRefNodeFactory"/>
+<entry key="node-name" type="xstring" value="Reference Row Filter"/>
 <entry key="node-bundle-name" type="xstring" value="KNIME Base Nodes"/>
 <entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.base"/>
 <entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
@@ -33,7 +55,7 @@
 <entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
 <entry key="node-feature-version" type="xstring" value="3.7.0.v201812041331"/>
 <config key="factory_settings"/>
-<entry key="name" type="xstring" value="Extract Table Dimension"/>
+<entry key="name" type="xstring" value="Reference Row Filter"/>
 <entry key="hasContent" type="xboolean" value="false"/>
 <entry key="isInactive" type="xboolean" value="false"/>
 <config key="ports">
