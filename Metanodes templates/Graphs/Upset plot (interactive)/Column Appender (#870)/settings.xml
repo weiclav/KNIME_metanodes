@@ -10,10 +10,10 @@
 <entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
 <entry key="EnabledStatus" type="xboolean" value="true"/>
 </config>
-<entry key="wrap_table" type="xboolean" value="false"/>
+<entry key="wrap_table" type="xboolean" value="true"/>
 <config key="row_key_select_Internals">
 <entry key="SettingsModelID" type="xstring" value="SMID_string"/>
-<entry key="EnabledStatus" type="xboolean" value="true"/>
+<entry key="EnabledStatus" type="xboolean" value="false"/>
 </config>
 <entry key="row_key_select" type="xstring" value="Use row keys from SECOND table"/>
 </config>
