@@ -28,7 +28,7 @@
 <entry key="node-feature-name" type="xstring" value="KNIME Python Integration"/>
 <entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.python2.feature.group"/>
 <entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
-<entry key="node-feature-version" type="xstring" value="3.7.0.v201812041252"/>
+<entry key="node-feature-version" type="xstring" value="3.7.1.v201901281201"/>
 <config key="factory_settings"/>
 <entry key="name" type="xstring" value="Python Edit Variable"/>
 <entry key="hasContent" type="xboolean" value="false"/>
