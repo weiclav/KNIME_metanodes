@@ -46,9 +46,9 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
 
 #### Programs
 
-- [KNIME](https://www.knime.com/) 3.6.1
+- [KNIME](https://www.knime.com/) 3.7.1
   - The KNIME nodes consists of the following GNU GPL 3.0 License. Licence terms are available here: https://www.knime.com/downloads/full-license
-- [Python](https://www.python.org/) 3.6.5
+- [Python](https://www.python.org/) 3.6.7
   - The Python consists of the following Python 3.6 License. Licence terms are available here: https://docs.python.org/3.6/license.html
 - [R](https://www.r-project.org/) 3.4.4
   - The R consists of the following GNU General Public Licences. Licence terms are available here: https://www.r-project.org/Licenses/
