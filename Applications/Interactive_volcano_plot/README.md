@@ -1,0 +1,1 @@
+Folder where by default interactive volcano plot will be stored after node execution.

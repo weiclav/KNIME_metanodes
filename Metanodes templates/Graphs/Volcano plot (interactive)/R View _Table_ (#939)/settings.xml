@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<entry key="Image width" type="xint" value="640"/>
+<entry key="Image height" type="xint" value="640"/>
+<entry key="Image resolution" type="xstring" value="NA"/>
+<entry key="Image background color" type="xstring" value="#ffffff"/>
+<entry key="Text point size" type="xint" value="12"/>
+<config key="R settings">
+<entry key="script" type="xstring" value="#library required for the interactive volcano plot%%00010library(plotly)%%00010%%00010#data input as a dataframe%%00010frame &lt;- as.data.frame(knime.in, stringsAsFactors = FALSE) %%00010%%00010frame$logFC &lt;- knime.in[,1]%%00010frame$pvalue &lt;- knime.in[,2]%%00010frame$protein_names &lt;- knime.in[,3]%%00010frame$protein_names_char &lt;- as.character(frame$protein_names)%%00010%%00010%%00010if (knime.flow.in[[&quot;spec_proteins&quot;]] == &quot;&quot;) {%%00010a&lt;- &quot; &quot;%%00010} else {%%00010%%00010# gets names of specific proteins to be labeled%%00010spec_prot &lt;- trimws(strsplit(knime.flow.in[[&quot;spec_proteins&quot;]],',')[[1]])%%00010list &lt;- strsplit(knime.flow.in[[&quot;spec_proteins&quot;]],',')%%00010%%00009%%00010# creates empty dataframe, where user-provided hits will be%%00010sp_prot &lt;- as.data.frame(matrix(data=NA, nrow=length(spec_prot),  ncol= 3))%%00010%%00010# uses colnames of frame dataset%%00010colnames(sp_prot) &lt;- colnames(frame)[4:6]%%00010%%00010# grep rows where the majority proteins are and appends them to the newly created dataframe%%00010for (i in 1:length(spec_prot)) {%%00010%%00009pom &lt;- grep(spec_prot[i], frame$protein_names_char)%%00010%%00009sp_prot[i,] &lt;- frame[pom, c(4,5,7)]%%00010}%%00010%%00010# arrows to user specified proteins%%00010a &lt;- list()%%00010for (i in 1:nrow(sp_prot)) {%%00010  m &lt;- sp_prot[i, ]%%00010  a[[i]] &lt;- list(%%00010    x = m[[&quot;logFC&quot;]],%%00010    y = -log10(m[[&quot;pvalue&quot;]]),%%00010    text = m[[&quot;protein_names&quot;]],%%00010    xref = &quot;x&quot;,%%00010    yref = &quot;y&quot;,%%00010    showarrow = TRUE,%%00010    arrowhead = 0.5,%%00010    ax = 20,%%00010    ay = -40%%00010  )%%00010}%%00010%%00010}%%00010#NA values removal%%00010frame &lt;- na.omit(frame)%%00010%%00010#zero p value replacement%%00010frame[(frame$pvalue == 0)] &lt;- knime.flow.in[[&quot;zero_replacement&quot;]]%%00010%%00010###################################### Interactive volcano plot ##########################################%%00010%%00010# add a grouping column, default value is &quot;non-significant&quot; (ie pval &gt;0.05, logFC &gt;1.5)%%00010frame[&quot;group&quot;] &lt;- &quot;Non sign.&quot;%%00010%%00010# p value is significant when &lt;0.05, logFC set by default &gt;1.5%%00010%%00010# change the grouping if pvalue &lt;0.05, but logFC &lt;1.5%%00010frame[which(frame[knime.flow.in[[&quot;p_value_column&quot;]]]&lt; (knime.flow.in[[&quot;p_value_threshold&quot;]]) &amp; abs(frame[knime.flow.in[[&quot;logFC_column&quot;]]]) &lt; (knime.flow.in[[&quot;logFC_threshold&quot;]]) ), &quot;group&quot;] &lt;- &quot;Significant&quot;%%00010%%00010# change the grouping if logFC &gt;1.5, but pvalue &gt;0.05%%00010frame[which(frame[knime.flow.in[[&quot;p_value_column&quot;]]]&gt; (knime.flow.in[[&quot;p_value_threshold&quot;]]) &amp; abs(frame[knime.flow.in[[&quot;logFC_column&quot;]]]) &gt; (knime.flow.in[[&quot;logFC_threshold&quot;]]) ), &quot;group&quot;] &lt;- &quot;FoldChange&quot;%%00010%%00010# change the grouping if pvalue &lt;0.05 AND logFC &gt;1.5%%00010frame[which(frame[knime.flow.in[[&quot;p_value_column&quot;]]]&lt; (knime.flow.in[[&quot;p_value_threshold&quot;]]) &amp; abs(frame[knime.flow.in[[&quot;logFC_column&quot;]]]) &gt; (knime.flow.in[[&quot;logFC_threshold&quot;]]) ), &quot;group&quot;] &lt;- &quot;Significant&amp;FoldChange&quot;%%00010%%00010# make the Plot.ly plot%%00010p &lt;- plot_ly(data = frame, x = frame$logFC, y = -log10(frame$pvalue), text = frame$protein_names , mode = &quot;markers&quot;, color = frame$group) %&gt;% %%00010  layout(title = knime.flow.in[[&quot;plot_title&quot;]],%%00010         xaxis = list(title=knime.flow.in[[&quot;x_axis_label&quot;]]),%%00010         yaxis = list(title=knime.flow.in[[&quot;y_axis_label&quot;]]),%%00010         annotations = a) %%00010p%%00010%%00010htmlwidgets::saveWidget(as.widget(p), &quot;//home/knimeuser/knime-workspace/Applications/Interactive_volcano_plot/interactive_volcano_plot.html&quot;, selfcontained=FALSE)%%00010%%00010############################## Static volcano plot for output ###################################%%00010frame_output &lt;- with(frame, plot(frame$logFC, -log10(frame$pvalue), pch=20, main=&quot;Volcano plot&quot;, xlim=c(-6,8), xlab = &quot;log fold change&quot;, ylab = &quot;-log10(pvalue)&quot;))%%00010%%00010# output%%00010knime.out &lt;- frame_output%%00010"/>
+<entry key="templateUUID" type="xstring" isnull="true" value=""/>
+<entry key="version" type="xstring" value="version 1.x"/>
+<entry key="Output non numbers (NaN, Inf, -Inf) as missing cells" type="xboolean" value="false"/>
+<entry key="sendRowNames" type="xboolean" value="true"/>
+<entry key="sendBatchSize" type="xint" value="10000"/>
+<entry key="knimeInType" type="xstring" value="data.frame"/>
+</config>
+<entry key="Image type" type="xstring" value="PNG"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="IDLE"/>
+<entry key="factory" type="xstring" value="org.knime.r.RViewNodeFactory"/>
+<entry key="node-name" type="xstring" value="R View (Table)"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME R-Project nodes"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.r"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="3.7.1.v201901291055"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Interactive R Statistics Integration"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.r.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="3.7.1.v201901291055"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="R View (Table)"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>
