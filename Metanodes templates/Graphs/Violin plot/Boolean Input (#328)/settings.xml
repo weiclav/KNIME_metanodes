@@ -10,7 +10,7 @@
 <entry key="boolean" type="xboolean" value="false"/>
 </config>
 <entry key="label" type="xstring" value="Manual y axis limits?"/>
-<entry key="description" type="xstring" value="whether to use manually set y axis limits (ckecked) or use automatic limits (unchecked)"/>
+<entry key="description" type="xstring" value="whether to use manually set y axis limits (checked) or use automatic limits (unchecked)"/>
 <entry key="hideInWizard" type="xboolean" value="false"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
 <entry key="required" type="xboolean" value="true"/>

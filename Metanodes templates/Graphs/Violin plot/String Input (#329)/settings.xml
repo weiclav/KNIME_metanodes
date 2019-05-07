@@ -9,7 +9,7 @@
 <config key="defaultValue">
 <entry key="string" type="xstring" value="-10;10"/>
 </config>
-<entry key="label" type="xstring" value="manual y axis limits"/>
+<entry key="label" type="xstring" value="Manual y axis limits"/>
 <entry key="description" type="xstring" value="limits of y axis in the form of two numbers separated by semicolon; use point (.) as decimal separator"/>
 <entry key="hideInWizard" type="xboolean" value="false"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
