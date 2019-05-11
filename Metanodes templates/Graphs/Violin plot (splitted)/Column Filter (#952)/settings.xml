@@ -194,7 +194,7 @@
 </config>
 </config>
 </config>
-<entry key="label" type="xstring" value="Dataset 1 columns"/>
+<entry key="label" type="xstring" value="Dataset 1 columns (left part of violin plots)"/>
 <entry key="description" type="xstring" value="Dataset 1 columns (left parts of the splitted violin plots). Please notice that the samples will be paired with the ones from Dataset 2 according to the order (i.e. the first from dataset 1(&quot;left part&quot;) will be plotted to one split violin plot with the first from dataset 2 (&quot;right part&quot;))"/>
 <entry key="hideInWizard" type="xboolean" value="false"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
