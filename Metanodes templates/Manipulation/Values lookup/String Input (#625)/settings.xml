@@ -38,7 +38,7 @@
 <config key="styles"/>
 </config>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
-<entry key="state" type="xstring" value="IDLE"/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
 <config key="nodecontainer_message">
 <entry key="type" type="xstring" value="WARNING"/>
 <entry key="message" type="xstring" value="Outer workflow does not have input data, execute it first"/>
@@ -48,11 +48,11 @@
 <entry key="node-bundle-name" type="xstring" value="KNIME Quick Form Nodes"/>
 <entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.js.quickforms"/>
 <entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
-<entry key="node-bundle-version" type="xstring" value="3.7.0.v201812040932"/>
+<entry key="node-bundle-version" type="xstring" value="3.7.1.v201901281201"/>
 <entry key="node-feature-name" type="xstring" value="KNIME Quick Forms"/>
 <entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.js.quickforms.feature.group"/>
 <entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
-<entry key="node-feature-version" type="xstring" value="3.7.0.v201812040932"/>
+<entry key="node-feature-version" type="xstring" value="3.7.1.v201901281201"/>
 <config key="factory_settings"/>
 <entry key="name" type="xstring" value="String Input"/>
 <entry key="hasContent" type="xboolean" value="false"/>
