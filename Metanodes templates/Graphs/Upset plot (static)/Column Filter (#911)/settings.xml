@@ -168,7 +168,7 @@
 </config>
 </config>
 <entry key="label" type="xstring" value="Columns to process"/>
-<entry key="description" type="xstring" value="select columns to be processed"/>
+<entry key="description" type="xstring" value="Select columns to be processed"/>
 <entry key="hideInWizard" type="xboolean" value="false"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
 <entry key="required" type="xboolean" value="true"/>
@@ -326,7 +326,7 @@
 <config key="styles"/>
 </config>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
-<entry key="state" type="xstring" value="IDLE"/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
 <entry key="factory" type="xstring" value="org.knime.js.base.node.quickform.filter.column.ColumnFilterQuickFormNodeFactory"/>
 <entry key="node-name" type="xstring" value="Column Filter"/>
 <entry key="node-bundle-name" type="xstring" value="KNIME Quick Form Nodes"/>
