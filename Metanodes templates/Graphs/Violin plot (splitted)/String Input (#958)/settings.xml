@@ -9,7 +9,7 @@
 <config key="defaultValue">
 <entry key="string" type="xstring" value="data1,data2"/>
 </config>
-<entry key="label" type="xstring" value="Legend "/>
+<entry key="label" type="xstring" value="Legend (left part,right part)"/>
 <entry key="description" type="xstring" value="Provide the legend for the splitted violin plot, separated by comma - the first string should correspond to the left part of splitted violin plot, the second string to the right part."/>
 <entry key="hideInWizard" type="xboolean" value="false"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
