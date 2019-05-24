@@ -480,7 +480,7 @@
 <config key="nodeAnnotation">
 <entry key="text" type="xstring" value="loessF normalization"/>
 <entry key="bgcolor" type="xint" value="16777215"/>
-<entry key="x-coordinate" type="xint" value="377"/>
+<entry key="x-coordinate" type="xint" value="437"/>
 <entry key="y-coordinate" type="xint" value="579"/>
 <entry key="width" type="xint" value="126"/>
 <entry key="height" type="xint" value="17"/>
