@@ -7,7 +7,7 @@
 </config>
 <config key="model">
 <config key="defaultValue">
-<entry key="string" type="xstring" value=""/>
+<entry key="string" type="xstring" value="volcano_plot.html"/>
 </config>
 <entry key="label" type="xstring" value="name of the plot file"/>
 <entry key="description" type="xstring" value="provide the name of the plot file (ie how the plot will be saved)"/>
