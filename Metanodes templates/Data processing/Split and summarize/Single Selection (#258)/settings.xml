@@ -7,20 +7,24 @@
 </config>
 <config key="model">
 <config key="defaultValue">
-<entry key="variable_value" type="xstring" value="mean"/>
+<entry key="variable_value" type="xstring" value="median"/>
 </config>
-<entry key="label" type="xstring" value="value to calculate"/>
-<entry key="description" type="xstring" value="value to be calculated from the numbers in the cell, which should be separated"/>
+<entry key="label" type="xstring" value="statistics to calculate"/>
+<entry key="description" type="xstring" value="statistics to be calculated from the list of numbers in the cell"/>
 <entry key="hideInWizard" type="xboolean" value="false"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
 <entry key="required" type="xboolean" value="true"/>
 <entry key="parameterName" type="xstring" value="single-selection"/>
 <entry key="customCSS" type="xstring" value=""/>
-<entry key="flowvariablename" type="xstring" value="calculated_value"/>
+<entry key="flowvariablename" type="xstring" value="statistics"/>
 <config key="possible_choices">
-<entry key="array-size" type="xint" value="2"/>
-<entry key="0" type="xstring" value="mean"/>
-<entry key="1" type="xstring" value="max"/>
+<entry key="array-size" type="xint" value="6"/>
+<entry key="0" type="xstring" value="max"/>
+<entry key="1" type="xstring" value="median"/>
+<entry key="2" type="xstring" value="mean"/>
+<entry key="3" type="xstring" value="min"/>
+<entry key="4" type="xstring" value="std"/>
+<entry key="5" type="xstring" value="var"/>
 </config>
 <entry key="type" type="xstring" value="Radio buttons (horizontal)"/>
 <entry key="limit_number_visible_options" type="xboolean" value="true"/>
