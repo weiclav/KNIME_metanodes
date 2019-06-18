@@ -12,11 +12,7 @@
 <entry key="array-size" type="xint" value="0"/>
 </config>
 <config key="excluded_names">
-<entry key="array-size" type="xint" value="4"/>
-<entry key="0" type="xstring" value="NA_reptech"/>
-<entry key="1" type="xstring" value="NA_repbio"/>
-<entry key="2" type="xstring" value="NA_condition"/>
-<entry key="3" type="xstring" value="columns_to_process"/>
+<entry key="array-size" type="xint" value="0"/>
 </config>
 <entry key="enforce_option" type="xstring" value="EnforceInclusion"/>
 <config key="name_pattern">
@@ -28,11 +24,11 @@
 <entry key="variable-prefix" type="xstring" isnull="true" value=""/>
 <config key="port-names">
 <entry key="array-size" type="xint" value="1"/>
-<entry key="0" type="xstring" value="Imputed dataframe"/>
+<entry key="0" type="xstring" value="Port 1"/>
 </config>
 <config key="port-descriptions">
 <entry key="array-size" type="xint" value="1"/>
-<entry key="0" type="xstring" value="output dataframe containing input table plus newly computed columns or new columns only"/>
+<entry key="0" type="xstring" value=""/>
 </config>
 </config>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>

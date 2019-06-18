@@ -22,14 +22,14 @@
 </config>
 </config>
 <entry key="variable-prefix" type="xstring" isnull="true" value=""/>
-<entry key="sub-node-description" type="xstring" value="Node for the imputation of missing values in bottom-up MS-based quantitative proteomic data using R package imp4p.%%00010%%00010The node imputes the missing values under both missing not completely at random (MNAR) and missing completely at random (MCAR) assumptions. The imputed values are provided as new columns of input dataframe with the user-specified suffix.%%00010%%00010For the input user should provide log2 transformed normalized protein or peptide intensities (in a format of e.g. MaxQuant software output) and missing values have to be indiced as NA.%%00010%%00010For further information please refer to the imp4p package description: https://cran.r-project.org/web/packages/imp4p/imp4p.pdf%%00010=================%%00010%%00010Used programs and tools and their respective licenses at the time of the metanode creation. Version numbers and the licenses might differ based on your local installation. Please inspect your local installation and contact us if you can not locate your local version and or license terms.%%00010%%00010KNIME nodes (The KNIME nodes consists of the following GNU GPL 3.0 License. Licence terms are available here: https://www.gnu.org/licenses/gpl.html)%%00010Python 3 (The Python consists of the following Python 3.6 License. Licence terms are available here: https://docs.python.org/3.6/license.html)%%00010R library imp4p (The imp4p consists of the following General Public License (GPL), version 3 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3)%%00010%%00010The metanode was created in KNIME 3.7.1 running inside the docker image (https://hub.docker.com/r/cfprot/knime/), tag 3.7.1a.%%00010%%00010=================%%00010%%00010This version of metanode is available under the GNU GPL 3.0 License, unless stated otherwise. The full version of the license terms is available at https://www.gnu.org/licenses/gpl.html.%%00010Version: 1.0.0-alpha from 2019-06-18%%00010Contact person: Kristina Gomoryova (423436@mail.muni.cz)%%00010More information can be found at https://github.com/OmicsWorkflows/KNIME_metanodes"/>
+<entry key="sub-node-description" type="xstring" value=""/>
 <config key="port-names">
 <entry key="array-size" type="xint" value="1"/>
-<entry key="0" type="xstring" value="Input table"/>
+<entry key="0" type="xstring" value="Port 1"/>
 </config>
 <config key="port-descriptions">
 <entry key="array-size" type="xint" value="1"/>
-<entry key="0" type="xstring" value="input table containing data columns to be imputed"/>
+<entry key="0" type="xstring" value=""/>
 </config>
 </config>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
