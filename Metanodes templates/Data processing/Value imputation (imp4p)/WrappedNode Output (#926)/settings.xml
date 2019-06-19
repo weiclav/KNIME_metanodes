@@ -12,7 +12,19 @@
 <entry key="array-size" type="xint" value="0"/>
 </config>
 <config key="excluded_names">
-<entry key="array-size" type="xint" value="0"/>
+<entry key="array-size" type="xint" value="12"/>
+<entry key="0" type="xstring" value="if_switch"/>
+<entry key="1" type="xstring" value="q_min"/>
+<entry key="2" type="xstring" value="q_norm"/>
+<entry key="3" type="xstring" value="eps"/>
+<entry key="4" type="xstring" value="columns_suffix"/>
+<entry key="5" type="xstring" value="remove_not_used"/>
+<entry key="6" type="xstring" value="nknn"/>
+<entry key="7" type="xstring" value="nb_iter"/>
+<entry key="8" type="xstring" value="NA_reptech"/>
+<entry key="9" type="xstring" value="NA_repbio"/>
+<entry key="10" type="xstring" value="NA_condition"/>
+<entry key="11" type="xstring" value="columns_to_process"/>
 </config>
 <entry key="enforce_option" type="xstring" value="EnforceInclusion"/>
 <config key="name_pattern">
@@ -22,13 +34,16 @@
 </config>
 </config>
 <entry key="variable-prefix" type="xstring" isnull="true" value=""/>
+<entry key="sub-node-description" type="xstring" isnull="true" value=""/>
 <config key="port-names">
-<entry key="array-size" type="xint" value="1"/>
-<entry key="0" type="xstring" value="Port 1"/>
+<entry key="array-size" type="xint" value="2"/>
+<entry key="0" type="xstring" value="Imputed dataframe"/>
+<entry key="1" type="xstring" value="Binary matrix"/>
 </config>
 <config key="port-descriptions">
-<entry key="array-size" type="xint" value="1"/>
+<entry key="array-size" type="xint" value="2"/>
 <entry key="0" type="xstring" value=""/>
+<entry key="1" type="xstring" value=""/>
 </config>
 </config>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
@@ -47,6 +62,12 @@
 <config key="factory_settings">
 <config key="port_0">
 <entry key="index" type="xint" value="0"/>
+<config key="type">
+<entry key="object_class" type="xstring" value="org.knime.core.node.BufferedDataTable"/>
+</config>
+</config>
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
 <config key="type">
 <entry key="object_class" type="xstring" value="org.knime.core.node.BufferedDataTable"/>
 </config>
