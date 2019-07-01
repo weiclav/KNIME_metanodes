@@ -10,7 +10,7 @@
 <entry key="boolean" type="xboolean" value="false"/>
 </config>
 <entry key="label" type="xstring" value="Remove not used columns?"/>
-<entry key="description" type="xstring" value="whether to remove not used columns or not; unchecked -&gt; original dataframe will be returned with added columns; checked -&gt; dataframe of processed columns will be returned only"/>
+<entry key="description" type="xstring" value="whether to remove not used columns or not; unchecked -&gt; original dataframe will be returned with added columns; checked -&gt; dataframe of processed columns will be returned only together with the input table 1 (top) IDs column"/>
 <entry key="hideInWizard" type="xboolean" value="false"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
 <entry key="required" type="xboolean" value="true"/>

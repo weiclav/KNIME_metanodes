@@ -49,7 +49,7 @@
 </config>
 <config key="workflow_template_information">
 <entry key="role" type="xstring" value="Template"/>
-<entry key="timestamp" type="xstring" value="2019-06-26 22:58:43"/>
+<entry key="timestamp" type="xstring" value="2019-07-01 16:14:24"/>
 <entry key="sourceURI" type="xstring" isnull="true" value=""/>
 <entry key="templateType" type="xstring" value="SubNode"/>
 </config>
