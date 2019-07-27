@@ -12,11 +12,14 @@
 <entry key="array-size" type="xint" value="0"/>
 </config>
 <config key="excluded_names">
-<entry key="array-size" type="xint" value="4"/>
-<entry key="0" type="xstring" value="if_switch1"/>
-<entry key="1" type="xstring" value="include_interactors"/>
-<entry key="2" type="xstring" value="proteinIDs_delimiter"/>
-<entry key="3" type="xstring" value="accession_id_column_name"/>
+<entry key="array-size" type="xint" value="7"/>
+<entry key="0" type="xstring" value="reactome_POST_link"/>
+<entry key="1" type="xstring" value="include_interactors_boolean"/>
+<entry key="2" type="xstring" value="resource"/>
+<entry key="3" type="xstring" value="resource (index)"/>
+<entry key="4" type="xstring" value="include_interactors"/>
+<entry key="5" type="xstring" value="proteinIDs_delimiter"/>
+<entry key="6" type="xstring" value="accession_id_column_name"/>
 </config>
 <entry key="enforce_option" type="xstring" value="EnforceInclusion"/>
 <config key="name_pattern">
@@ -28,18 +31,23 @@
 <entry key="variable-prefix" type="xstring" isnull="true" value=""/>
 <entry key="sub-node-description" type="xstring" isnull="true" value=""/>
 <config key="port-names">
-<entry key="array-size" type="xint" value="2"/>
-<entry key="0" type="xstring" value="response table"/>
+<entry key="array-size" type="xint" value="4"/>
+<entry key="0" type="xstring" value="pathway analysis results"/>
 <entry key="1" type="xstring" value="not found ids"/>
+<entry key="2" type="xstring" value="pathway analysis summary"/>
+<entry key="3" type="xstring" value="complete results (json)"/>
 </config>
 <config key="port-descriptions">
-<entry key="array-size" type="xint" value="2"/>
+<entry key="array-size" type="xint" value="4"/>
 <entry key="0" type="xstring" value="data returned from reactome"/>
 <entry key="1" type="xstring" value="ids that were on ipnut but not found in reactome db"/>
+<entry key="2" type="xstring" value="summary information on the pathway analysis"/>
+<entry key="3" type="xstring" value="complete analysis results in json format"/>
 </config>
 </config>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
 <entry key="state" type="xstring" value="IDLE"/>
+<entry key="isDeletable" type="xboolean" value="false"/>
 <entry key="factory" type="xstring" value="org.knime.core.node.workflow.virtual.subnode.VirtualSubNodeOutputNodeFactory"/>
 <entry key="node-name" type="xstring" value="WrappedNode Output"/>
 <entry key="node-bundle-name" type="xstring" value="KNIME Core API"/>
@@ -59,6 +67,18 @@
 </config>
 <config key="port_1">
 <entry key="index" type="xint" value="1"/>
+<config key="type">
+<entry key="object_class" type="xstring" value="org.knime.core.node.BufferedDataTable"/>
+</config>
+</config>
+<config key="port_2">
+<entry key="index" type="xint" value="2"/>
+<config key="type">
+<entry key="object_class" type="xstring" value="org.knime.core.node.BufferedDataTable"/>
+</config>
+</config>
+<config key="port_3">
+<entry key="index" type="xint" value="3"/>
 <config key="type">
 <entry key="object_class" type="xstring" value="org.knime.core.node.BufferedDataTable"/>
 </config>
