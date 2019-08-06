@@ -99,6 +99,10 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
 
 #### Other applications
 
+- [Reactome API](https://reactome.org/ContentService/)
+  - Selected API of the Reactome pathway database, for more details see documentation of individual metanodes
+  - The Reactome API consists of the two Creative Commons licenses: Creative Commons Public Domain (CC0) License and Creative Commons Attribution 4.0 International (CC BY 4.0) License. Licence terms are available here: https://reactome.org/license
+
 - [UpSet](http://vcg.github.io/upset/about/)
   - Local copy of the project is under the Applications subfolder.
   - The UpSet application consists of the following MIT license. Licence terms are available here: https://github.com/VCG/upset/blob/master/LICENSE
