@@ -7,7 +7,7 @@
 </config>
 <config key="model">
 <config key="defaultValue">
-<entry key="string" type="xstring" value=""/>
+<entry key="string" type="xstring" value="none"/>
 </config>
 <entry key="label" type="xstring" value="Samples blocks"/>
 <entry key="description" type="xstring" value="provide an information about the blocks of samples"/>

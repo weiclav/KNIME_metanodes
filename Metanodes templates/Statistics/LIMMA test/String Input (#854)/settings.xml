@@ -7,7 +7,7 @@
 </config>
 <config key="model">
 <config key="defaultValue">
-<entry key="string" type="xstring" value=""/>
+<entry key="string" type="xstring" value="none"/>
 </config>
 <entry key="label" type="xstring" value="Samples pairs"/>
 <entry key="description" type="xstring" value="provide an information about the paired samples"/>
@@ -19,7 +19,7 @@
 <entry key="flowvariablename" type="xstring" value="samples_pairs"/>
 <entry key="regex" type="xstring" value=""/>
 <entry key="error_message" type="xstring" value=""/>
-<entry key="editorType" type="xstring" value="Single-line"/>
+<entry key="editorType" type="xstring" value="Multi-line"/>
 <entry key="multilineEditorWidth" type="xint" value="60"/>
 <entry key="multilineEditorHeight" type="xint" value="5"/>
 </config>
@@ -29,7 +29,7 @@
 <entry key="x-coordinate" type="xint" value="177"/>
 <entry key="y-coordinate" type="xint" value="19"/>
 <entry key="width" type="xint" value="126"/>
-<entry key="height" type="xint" value="19"/>
+<entry key="height" type="xint" value="17"/>
 <entry key="alignment" type="xstring" value="CENTER"/>
 <entry key="borderSize" type="xint" value="0"/>
 <entry key="borderColor" type="xint" value="16777215"/>
