@@ -31,11 +31,6 @@
 <entry key="EnabledStatus" type="xboolean" value="false"/>
 </config>
 <entry key="replaceMissingValues" type="xboolean" value="false"/>
-<config key="enableHilite_Internals">
-<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
-<entry key="EnabledStatus" type="xboolean" value="false"/>
-</config>
-<entry key="enableHilite" type="xboolean" value="false"/>
 <config key="appendRowKeyCol_Internals">
 <entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
 <entry key="EnabledStatus" type="xboolean" value="true"/>
@@ -46,6 +41,11 @@
 <entry key="EnabledStatus" type="xboolean" value="true"/>
 </config>
 <entry key="newColumnName4RowKeyValues" type="xstring" value="rowIDs"/>
+<config key="enableHilite_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="false"/>
+</config>
+<entry key="enableHilite" type="xboolean" value="false"/>
 </config>
 <config key="nodeAnnotation">
 <entry key="text" type="xstring" value="creates %%00010column with rowIDs"/>
