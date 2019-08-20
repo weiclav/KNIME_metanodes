@@ -39,6 +39,10 @@
 </config>
 <entry key="customDescription" type="xstring" isnull="true" value=""/>
 <entry key="state" type="xstring" value="IDLE"/>
+<config key="nodecontainer_message">
+<entry key="type" type="xstring" value="WARNING"/>
+<entry key="message" type="xstring" value="Errors overwriting node settings with flow variables: Unknown variable &quot;case1port&quot;"/>
+</config>
 <entry key="factory" type="xstring" value="org.knime.base.node.switches.startcase.StartcaseNodeFactory"/>
 <entry key="node-name" type="xstring" value="CASE Switch Data (Start)"/>
 <entry key="node-bundle-name" type="xstring" value="KNIME Base Nodes"/>
