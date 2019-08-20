@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<entry key="sourceCode" type="xstring" value="# Copy input to output%%00010import operator%%00010data = input_table.copy()%%00010%%00010operators = {&quot;&gt;&quot;: operator.gt,%%00010       &quot;&gt;=&quot;: operator.ge,%%00010       &quot;&lt;=&quot;: operator.le,%%00010       &quot;&lt;&quot;: operator.lt}%%00010%%00010operator_func = operators[flow_variables['operator']]%%00010%%00010data[flow_variables['percentile_filter_column']+'_rank'] = data[flow_variables['percentile_filter_column']].rank(method=flow_variables['ranking_method'], ascending=True, numeric_only=True, pct=False)%%00010data[flow_variables['percentile_filter_column']+'_percentile'] = data[flow_variables['percentile_filter_column']].rank(method=flow_variables['ranking_method'],ascending=True, numeric_only=True, pct=True)%%00010%%00010true_matrix = operator_func(data[flow_variables['percentile_filter_column']+'_percentile'], flow_variables['percentile_threshold'])%%00010%%00010output_table_1 = data[true_matrix]%%00010output_table_2 = data[~true_matrix]"/>
+<entry key="rowLimit" type="xint" value="1000"/>
+<entry key="pythonVersionOption" type="xstring" value="PYTHON3"/>
+<entry key="convertMissingToPython" type="xboolean" value="false"/>
+<entry key="convertMissingFromPython" type="xboolean" value="false"/>
+<entry key="sentinelOption" type="xstring" value="MIN_VAL"/>
+<entry key="sentinelValue" type="xint" value="0"/>
+<entry key="chunkSize" type="xint" value="500000"/>
+<entry key="python2Command" type="xstring" value=""/>
+<entry key="python3Command" type="xstring" value=""/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<entry key="factory" type="xstring" value="org.knime.python2.nodes.script1in2out.Python2Script1In2OutNodeFactory"/>
+<entry key="node-name" type="xstring" value="Python Script (1⇒2)"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME Python nodes"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.python2.nodes"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="3.7.2.v201904170931"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Python Integration"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.python2.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="3.7.2.v201904170931"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="Python Script (1⇒2)"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+<config key="port_2">
+<entry key="index" type="xint" value="2"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>
