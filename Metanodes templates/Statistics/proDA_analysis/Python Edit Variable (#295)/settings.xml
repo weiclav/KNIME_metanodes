@@ -6,7 +6,7 @@
 <entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
 </config>
 <config key="model">
-<entry key="sourceCode" type="xstring" value="# creates variable for not used columns removal IF switch%%00010if flow_variables['remove_not_used'] == 1:%%00010    flow_variables['if_switch'] = 'top'%%00010elif flow_variables['remove_not_used'] == 0:%%00010    flow_variables['if_switch'] = 'bottom'%%00010%%00010# changes the flowvariable holding the proDA columns prefix to be compatible with regex columns renaming%%00010flow_variables['columns_prefix'] = flow_variables['test_name'] + &quot;$1&quot;"/>
+<entry key="sourceCode" type="xstring" value="# creates variable for not used columns removal IF switch%%00010if flow_variables['remove_not_used'] == 1:%%00010    flow_variables['if_switch'] = 'top'%%00010elif flow_variables['remove_not_used'] == 0:%%00010    flow_variables['if_switch'] = 'bottom'%%00010%%00010# changes the flowvariable holding the proDA columns prefix to be compatible with regex columns renaming%%00010flow_variables['columns_prefix'] = flow_variables['test_name'] + &quot;$1&quot;%%00010%%00010# p-value adjustment methods%%00010adj_method_dict = {%%00010%%00009'none': 'none',%%00010%%00009'Benjamini &amp; Hochberg': 'BH',%%00010%%00009'Benjamini &amp; Yekutieli': 'BY',%%00010%%00009'Bonferroni': 'bonferroni'%%00010%%00009}%%00010%%00010flow_variables['adjP_method'] = adj_method_dict[flow_variables['adjP_method']]"/>
 <entry key="rowLimit" type="xint" value="1000"/>
 <entry key="pythonVersionOption" type="xstring" value="PYTHON3"/>
 <entry key="convertMissingToPython" type="xboolean" value="false"/>
