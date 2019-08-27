@@ -9,8 +9,8 @@
 <config key="defaultValue">
 <entry key="string" type="xstring" value="B-A,C-A"/>
 </config>
-<entry key="label" type="xstring" value="contrast"/>
-<entry key="description" type="xstring" value="define the contrasts"/>
+<entry key="label" type="xstring" value="contrasts"/>
+<entry key="description" type="xstring" value="define the contrasts (samples to be compared; separated by comma)"/>
 <entry key="hideInWizard" type="xboolean" value="false"/>
 <entry key="hideInDialog" type="xboolean" value="false"/>
 <entry key="required" type="xboolean" value="true"/>
