@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<entry key="script" type="xstring" value="# libraries required%%00010library(&quot;plotly&quot;)%%00010%%00010# data input%%00010data_annotation &lt;- as.character(knime.in[,1])%%00010data_matrix &lt;- as.matrix(knime.in[,2:ncol(knime.in)])%%00010#str(data_matrix)%%00010#str(data_annotation)%%00010%%00010zmin_usr &lt;- knime.flow.in[[&quot;zmin_usr&quot;]]%%00010zmax_usr &lt;- knime.flow.in[[&quot;zmax_usr&quot;]]%%00010%%00010pom &lt;- knime.flow.in[[&quot;plot_save&quot;]]%%00010%%00010# plotting%%00010if ((zmin_usr == 0)&amp;&amp; (zmax_usr == 0)) {%%00010knime.flow.in[[&quot;plot_save&quot;]] &lt;- plot_ly(x = colnames(data_matrix), %%00010%%00009%%00009%%00009y = data_annotation,%%00010%%00009%%00009%%00009z = data_matrix, %%00010%%00009%%00009%%00009type = &quot;heatmap&quot;, %%00010%%00009%%00009%%00009zauto = TRUE) %&gt;%%%00010%%00009          #zmin=round(min(data_matrix)),%%00010               #zmax=round(max(data_matrix))) %&gt;%%%00010               layout(title = knime.flow.in[[&quot;graph_title&quot;]]) %%00010%%00009%%00009%%00009#zauto = FALSE, zmin = 000, zmax = 100)%%00010} else {%%00010knime.flow.in[[&quot;plot_save&quot;]] &lt;- plot_ly(x = colnames(data_matrix), %%00010%%00009%%00009%%00009y = data_annotation,%%00010%%00009%%00009%%00009z = data_matrix, %%00010%%00009%%00009%%00009type = &quot;heatmap&quot;, %%00010%%00009%%00009%%00009zauto = FALSE,%%00010%%00009          zmin = zmin_usr,%%00010               zmax = zmax_usr) %&gt;%%%00010               layout(title = knime.flow.in[[&quot;graph_title&quot;]])%%00010}%%00010%%00010knime.flow.in[[&quot;plot_save&quot;]]%%00010%%00010%%00010# plot saving%%00010# checks if user provided .html or not, if not, it will automatically append it to the name of file-to-be-saved%%00010if (grepl(&quot;.html&quot;, pom, fixed=TRUE) == TRUE) {%%00010 %%00009f1 &lt;- paste(knime.flow.in[[&quot;plot_path&quot;]],pom, sep=&quot;&quot;, collapse = NULL)%%00010} else {%%00010%%00009f &lt;- paste(pom,&quot;.html&quot;, sep=&quot;&quot;,collapse = NULL)%%00010%%00009f1 &lt;- paste(knime.flow.in[[&quot;plot_path&quot;]],f, sep=&quot;&quot;, collapse = NULL)%%00010}%%00010%%00010htmlwidgets::saveWidget(as.widget(knime.flow.in[[&quot;plot_save&quot;]]), f1, selfcontained=FALSE)%%00010#htmlwidgets::saveWidget(as.widget(knime.flow.in[[&quot;plot_save&quot;]]), f1, selfcontained=TRUE)%%00010# output%%00010knime.out &lt;- data_matrix"/>
+<entry key="templateUUID" type="xstring" isnull="true" value=""/>
+<entry key="version" type="xstring" value="version 1.x"/>
+<entry key="Output non numbers (NaN, Inf, -Inf) as missing cells" type="xboolean" value="false"/>
+<entry key="sendRowNames" type="xboolean" value="true"/>
+<entry key="sendBatchSize" type="xint" value="10000"/>
+<entry key="knimeInType" type="xstring" value="data.frame"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<entry key="factory" type="xstring" value="org.knime.r.RSnippetNodeFactory"/>
+<entry key="node-name" type="xstring" value="R Snippet"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME R-Project nodes"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.r"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="3.7.1.v201901291055"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Interactive R Statistics Integration"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.r.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="3.7.1.v201901291055"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="R Snippet"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>
