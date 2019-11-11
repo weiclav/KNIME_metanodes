@@ -46,11 +46,13 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
 
 #### Programs
 
-- [KNIME](https://www.knime.com/) 3.7.1
+- [KNIME](https://www.knime.com/) 3.7.2
   - The KNIME nodes consists of the following GNU GPL 3.0 License. Licence terms are available here: https://www.knime.com/downloads/full-license
-- [Python](https://www.python.org/) 3.6.7
+- [Python](https://www.python.org/) 3.6.8
   - The Python consists of the following Python 3.6 License. Licence terms are available here: https://docs.python.org/3.6/license.html
-- [R](https://www.r-project.org/) 3.4.4
+- [Python](https://www.python.org/) 2.7.15+
+    - The Python consists of the following Python 2.7 License. Licence terms are available here: https://docs.python.org/2.7/license.html
+- [R](https://www.r-project.org/) 3.6.1
   - The R consists of the following GNU General Public Licences. Licence terms are available here: https://www.r-project.org/Licenses/
 
 #### KNIME extensions on top of the standard KNIME Analytics Platform installation
@@ -62,40 +64,47 @@ Metanodes are made within docker container running KNIME accessible via VNC (htt
 - [PIA](https://github.com/mpc-bioinformatics/pia) 1.3.7 (de.mpc.pia.feature.feature.group/1.3.7.v201803061425)
     - The PIA consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
 
-#### Python 3 packages
-- [numpy](http://www.numpy.org/) 1.15.1
+#### Python 3 or 2 packages (alphabetical order)
+- [matplotlib](https://matplotlib.org/) 3.1.0 (python3) and 2.2.4 (python2)
+    - The matplotlib consists of the following Python Software Foundation License (BSD compatible). Licence terms are available here: https://matplotlib.org/users/license.html
+- [numpy](http://www.numpy.org/) 1.16.4
     - The numpy consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
-- [pandas](https://pandas.pydata.org/) 0.23.4
+- [pandas](https://pandas.pydata.org/) 0.24.2
     - The pandas consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
+- [pip](https://pypi.org/project/pip/) 19.2.1
+    - The pip consists of the following MIT License (MIT). Licence terms are available here: https://github.com/pypa/pip/blob/master/LICENSE.txt
+- [scipy](https://www.scipy.org/) 1.2.2
+    - The scipy consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
 - [seaborn](https://seaborn.pydata.org/) 0.9.0
     - The seaborn consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
-- [statsmodels](https://www.statsmodels.org/stable/index.html) 0.9.0
+- [statsmodels](https://www.statsmodels.org/stable/index.html) 0.10.1
     - The statsmodels consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
-- [matplotlib](https://matplotlib.org/) 2.2.3
-    - The matplotlib consists of the following Python Software Foundation License (BSD compatible). Licence terms are available here: https://matplotlib.org/users/license.html
-- [scipy](https://www.scipy.org/) 1.1.0
-    - The scipy consists of the following BSD/3clause license. Licence terms are available here: https://opensource.org/licenses/BSD-3-Clause
 
-#### R libraries
 
-- [Rserve](https://cran.r-project.org/web/packages/Rserve/index.html)
-    - The Rserve consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
-- [preprocessCore](https://www.bioconductor.org/packages/release/bioc/html/preprocessCore.html)
-    - The preprocessCore consists of the following GNU Library General Public (LGPL) License, version 2 (or higher) license. Licence terms are available here: https://www.r-project.org/Licenses/LGPL-2
-- [limma](https://bioconductor.org/packages/release/bioc/html/limma.html)
-    - The limma consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
+#### R libraries (alphabetical order)
+
 - [Biobase](https://bioconductor.org/packages/release/bioc/html/Biobase.html)
     - The Biobase consists of the following Artistic-2.0 license. Licence terms are available here: https://opensource.org/licenses/Artistic-2.0
-- [vsn](https://bioconductor.org/packages/release/bioc/html/vsn.html)
-    - The vsn consists of the following Artistic-2.0 license. Licence terms are available here: https://opensource.org/licenses/Artistic-2.0
-- [pcaMethods](https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html)
-    - The pcaMethods consists of the following General Public License (GPL), version 3 (or higher) license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3
-- [impute](http://www.bioconductor.org/packages/release/bioc/html/impute.html)
-    - The impute consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
 - [imp4p](https://cran.r-project.org/web/packages/imp4p/index.html)
     - The imp4p consists of the following General Public License (GPL), version 3 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3
+- [impute](http://www.bioconductor.org/packages/release/bioc/html/impute.html)
+    - The impute consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
+- [limma](https://bioconductor.org/packages/release/bioc/html/limma.html)
+    - The limma consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
+- [pcaMethods](https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html)
+    - The pcaMethods consists of the following General Public License (GPL), version 3 (or higher) license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3
+- [plotly](https://cran.r-project.org/web/packages/plotly/index.html)
+    - The plotly consists of the following MIT license and License file. Licence terms are available here: https://cran.r-project.org/web/licenses/MIT and https://cran.r-project.org/web/packages/plotly/LICENSE
+- [preprocessCore](https://www.bioconductor.org/packages/release/bioc/html/preprocessCore.html)
+    - The preprocessCore consists of the following GNU Library General Public (LGPL) License, version 2 (or higher) license. Licence terms are available here: https://www.r-project.org/Licenses/LGPL-2
+- [proDA](https://const-ae.github.io/proDA/)
+    - The proDA consists of the following GPL-3 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-3
+- [Rserve](https://cran.r-project.org/web/packages/Rserve/index.html)
+    - The Rserve consists of the following General Public License (GPL), version 2 license. Licence terms are available here: https://www.r-project.org/Licenses/GPL-2
 - [UpSetR](https://cran.r-project.org/web/packages/UpSetR/index.html)
     - UpSet application (https://caleydo.org/tools/upset/) (The UpSet application consist of the following MIT license. Licence terms are available here: https://github.com/VCG/upset/blob/master/LICENSE)
+- [vsn](https://bioconductor.org/packages/release/bioc/html/vsn.html)
+    - The vsn consists of the following Artistic-2.0 license. Licence terms are available here: https://opensource.org/licenses/Artistic-2.0
 
 #### Other applications
 
