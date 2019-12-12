@@ -6,8 +6,8 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-dash = "==1.4.0"
-dash-bio = "*"
+dash = "==1.7.0"
+dash-bio = "==0.4.5"
 
 [requires]
 python_version = "3.7"
