@@ -5,7 +5,7 @@
 <entry key="version" type="xstring" value="3.7.0"/>
 <config key="workflow_template_information">
 <entry key="role" type="xstring" value="Template"/>
-<entry key="timestamp" type="xstring" value="2020-02-27 16:28:45"/>
+<entry key="timestamp" type="xstring" value="2020-02-27 21:38:53"/>
 <entry key="sourceURI" type="xstring" isnull="true" value=""/>
 <entry key="templateType" type="xstring" value="SubNode"/>
 </config>
