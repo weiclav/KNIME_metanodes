@@ -7,7 +7,7 @@
 </config>
 <config key="model">
 <config key="defaultValue">
-<entry key="column" type="xstring" isnull="true" value=""/>
+<entry key="column" type="xstring" value="old"/>
 </config>
 <entry key="label" type="xstring" value="Search string (regexp)"/>
 <entry key="description" type="xstring" value="The search pattern, which may contain group patterns used in back references."/>
@@ -19,8 +19,8 @@
 <entry key="flowvariablename" type="xstring" value="search_string_column"/>
 <config key="possibleColumns">
 <entry key="array-size" type="xint" value="2"/>
-<entry key="0" type="xstring" value="OLD"/>
-<entry key="1" type="xstring" value="NEW"/>
+<entry key="0" type="xstring" value="old"/>
+<entry key="1" type="xstring" value="new"/>
 </config>
 <entry key="type" type="xstring" value="Dropdown"/>
 <entry key="limit_number_visible_options" type="xboolean" value="false"/>
