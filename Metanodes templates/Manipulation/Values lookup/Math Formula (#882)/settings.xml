@@ -6,9 +6,9 @@
 <entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
 </config>
 <config key="model">
-<entry key="append_column" type="xboolean" value="false"/>
-<entry key="replaced_column" type="xstring" value="rowIndex_ungroupped"/>
 <entry key="expression" type="xstring" value="$$ROWINDEX$$"/>
+<entry key="replaced_column" type="xstring" value="rowIndex_ungroupped"/>
+<entry key="append_column" type="xboolean" value="false"/>
 <entry key="convert_to_int" type="xboolean" value="false"/>
 </config>
 <config key="nodeAnnotation">
