@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<entry key="script" type="xstring" value="# imports used libraries%%00010library(&quot;DEqMS&quot;)%%00010library(matrixStats)%%00010%%00010# data input%%00010df.prot &lt;- data.frame(knime.in)%%00010maj_ids &lt;- as.character(knime.in$&quot;Majority protein IDs&quot;)%%00010%%00010# creates dataframe using intensities only%%00010df.LFQ = df.prot[,1:(ncol(df.prot)/2)]%%00010df.LFQ[df.LFQ==0] &lt;- NA%%00010rownames(df.LFQ) = maj_ids %%00010%%00010groups_list &lt;- trimws(strsplit(knime.flow.in[[&quot;limma_design&quot;]],',')[[1]])%%00010factor_groups &lt;- factor(c(groups_list))%%00010%%00010# sum of NA values per conditions%%00010# after the FOR cycle new columns are appended containing info on number of NA per condition%%00010groups_numbers &lt;- paste(groups_list,1:(length(groups_list)), sep = &quot;_&quot;)%%00010df.LFQ_help &lt;- df.LFQ%%00010colnames(df.LFQ_help) &lt;- groups_numbers%%00010%%00010lev &lt;- levels(factor_groups)%%00010%%00010for (i in 1: length(lev)) {%%00010  level_string &lt;- grep(lev[i], colnames(df.LFQ_help))%%00010  pom &lt;- apply(df.LFQ_help,1,function(x) sum(is.na(x[level_string])))%%00010  df.LFQ_help$newcolumn &lt;- pom%%00010  names(df.LFQ_help)[names(df.LFQ_help) == 'newcolumn'] &lt;- lev[i]%%00010}%%00010%%00010# Filter protein table. DEqMS require minimum two values for each group.%%00010# takes only columns with sum of NA values &lt;2 per condition%%00010%%00010df.help &lt;- df.LFQ_help[,(ncol(df.LFQ)+1):ncol(df.LFQ_help)]%%00010%%00010df.help$pom &lt;- apply(df.help,1,function(x) sum(x&lt;2))%%00010df.help &lt;- df.help[df.help$pom == (ncol(df.help)-1),]%%00010rownames_help &lt;- rownames(df.help)%%00010ids_help &lt;- rownames(df.LFQ_help) %in% rownames_help%%00010df.new &lt;- cbind(df.LFQ_help, ids_help)%%00010df.new &lt;- df.new[df.new$ids_help == TRUE,]%%00010%%00010df.new &lt;- df.new[,1:ncol(df.LFQ)]  %%00010#str(df.new)%%00010%%00010# Make a data frame of unique peptide count per protein%%00010razor_unique &lt;- df.prot[,(ncol(df.prot)/2 + 1):ncol(df.prot)]%%00010#colnames(razor_unique)%%00010pep.count.table = data.frame(count = rowMins(as.matrix(razor_unique[,1:ncol(razor_unique)])),%%00010                             row.names = maj_ids)%%00010%%00010pep.count.table$count = pep.count.table$count+1%%00010%%00010# DEqMS analysis on LFQ data%%00010protein.matrix = log2(as.matrix(df.new))%%00010%%00010class = factor_groups%%00010design = model.matrix(~0+class) # fitting without intercept%%00010%%00010fit1 = lmFit(protein.matrix,design = design)%%00010%%00010contrasts_list &lt;- trimws(strsplit(knime.flow.in[[&quot;contrasts&quot;]],'[,]+')[[1]])%%00010partial_results_list = list()%%00010%%00010for (j in 1:length(contrasts_list)) {%%00010%%00009pom_contrast &lt;- contrasts_list[j]%%00010%%00009pom_contrast_sep &lt;- unlist(strsplit(pom_contrast, &quot;-&quot;, fixed = FALSE))%%00010%%00009pom_contrast_class &lt;- paste(&quot;class&quot;, pom_contrast_sep, sep=&quot;&quot;, collapse=NULL)%%00010%%00009final_contrast &lt;- paste(pom_contrast_class[1],pom_contrast_class[2], sep=&quot;-&quot;, collapse=NULL)%%00010%%00010%%00009cont &lt;- makeContrasts(final_contrast, levels = design)%%00010%%00009fit2 = contrasts.fit(fit1,contrasts = cont)%%00010%%00009fit3 &lt;- eBayes(fit2)%%00010%%00009fit3$count = pep.count.table[rownames(fit3$coefficients),&quot;count&quot;]%%00010%%00009fit4 = spectraCounteBayes(fit3)%%00010%%00009DEqMS.result = outputResult(fit4,coef_col = 1)%%00010%%00009colnames(DEqMS.result) &lt;- paste(pom_contrast,colnames(DEqMS.result),sep=&quot;_&quot;, collapse=NULL)%%00010%%00009partial_results_list[[j]] &lt;- DEqMS.result%%00010}%%00010%%00010results = do.call(cbind, partial_results_list)%%00010#str(results)%%00010%%00010#rownames(df.prot) = maj_ids%%00010results$majority_protein_IDs &lt;- rownames(results)%%00010rownames(results) &lt;- 1:nrow(results)%%00010#str(results)%%00010knime.out &lt;- results"/>
+<entry key="templateUUID" type="xstring" isnull="true" value=""/>
+<entry key="version" type="xstring" value="version 1.x"/>
+<entry key="Output non numbers (NaN, Inf, -Inf) as missing cells" type="xboolean" value="false"/>
+<entry key="sendRowNames" type="xboolean" value="true"/>
+<entry key="sendBatchSize" type="xint" value="10000"/>
+<entry key="knimeInType" type="xstring" value="data.frame"/>
+</config>
+<config key="nodeAnnotation">
+<entry key="text" type="xstring" value="DEqMS test"/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="569"/>
+<entry key="y-coordinate" type="xint" value="642"/>
+<entry key="width" type="xint" value="142"/>
+<entry key="height" type="xint" value="17"/>
+<entry key="alignment" type="xstring" value="CENTER"/>
+<entry key="borderSize" type="xint" value="0"/>
+<entry key="borderColor" type="xint" value="16777215"/>
+<entry key="defFontSize" type="xint" value="10"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<entry key="factory" type="xstring" value="org.knime.r.RSnippetNodeFactory"/>
+<entry key="node-name" type="xstring" value="R Snippet"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME R-Project nodes"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.r"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="4.1.1.v202001312017"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Interactive R Statistics Integration"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.r.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="4.1.1.v202001312017"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="R Snippet"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>
