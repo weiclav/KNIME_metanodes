@@ -3,9 +3,8 @@ import pandas as pd
 from dash.exceptions import PreventUpdate
 import base64
 import io
-import dash_html_components as html
 
-def get_data(contents, filename, separ, col_name_p_value, col_name_logFC):
+def get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_value):
     """
  Function which define dataframe from upload data and make a edit of dataframe
     :param contents (string): get from upload data - data for reading csv - used in function upload_data.parse_contents
@@ -15,14 +14,15 @@ def get_data(contents, filename, separ, col_name_p_value, col_name_logFC):
     :param col_name_logFC (list of string): get from logFC-dataset-dropdown - used in function upload_data.parse_contents
     :return: dataframe - chnaged
     """
+    # print(contents)
     contents = contents[0]
     filename = filename[0]
     df = parse_contents(contents, filename, separ)
-    df_no_nan_local = dataframe_edit(df, col_name_p_value, col_name_logFC)
+    df_no_nan_local = dataframe_edit(df, col_name_p_value, col_name_logFC, input_value)
     return df_no_nan_local
 
 
-def dataframe_edit(df, col_name_p_value, col_name_logFC):
+def dataframe_edit(df, col_name_p_value, col_name_logFC, input_value):
     """
  Function which edit dataframe from uploaded data for better vizualization, (drop NANs, reset index, defined new column logP)
     :param df: dataframe, where are drop NANs, reset index, defined new column logP
@@ -30,50 +30,68 @@ def dataframe_edit(df, col_name_p_value, col_name_logFC):
     :param col_name_logFC (list of string): get from logFC-dataset-dropdown - used in function upload_data.parse_contents
     :return: edit dataframe
     """
-    # if col_name_p_value is not None or col_name_logFC is not None:
-    #     df_no_nan = df.dropna(subset=[col_name_p_value, col_name_logFC])
-    #     df_no_nan = df_no_nan.reset_index(drop=True)
-    #
-    #     if isinstance(df[col_name_logFC][0], str) or col_name_logFC is None:
-    #         raise PreventUpdate
-    #
-    #     if isinstance(df[col_name_p_value][0], str) or not (df[col_name_p_value] >= 0).all(axis=None) or col_name_p_value is None:
-    #         raise PreventUpdate
-    #
-    #     if col_name_logFC == col_name_p_value:
-    #         raise PreventUpdate
-    #
-    #     df_no_nan['logP'] = df_no_nan[col_name_p_value].apply(lambda x: -np.log10(x))
-    # else:
-    #     raise PreventUpdate
     if col_name_p_value is not None or col_name_logFC is not None:
-        df_no_nan = df.dropna(subset=[col_name_p_value, col_name_logFC])
-        df_no_nan = df_no_nan.reset_index(drop=True)
 
-        # # df = df[df['id'].apply(lambda x: type(x) in [int, np.int64, float, np.float64])]
-        # new= df_no_nan[col_name_p_value].apply(lambda x: type(x))
-        # new2 = df_no_nan[col_name_logFC].apply(lambda x: type(x))
+        if col_name_p_value is None:
 
-        # df_no_nan = df_no_nan.reset_index(drop=True)
-
-        if isinstance(df_no_nan[col_name_logFC][0], str):
+            if isinstance(df[col_name_logFC][0], str) or np.isnan(df[col_name_logFC][0]):
+                df[col_name_logFC] = pd.to_numeric(df[col_name_logFC], errors='coerce')
+                df_no_nan = df.dropna(subset=[col_name_logFC])
+                df_no_nan = df_no_nan.reset_index(drop=True)
+                if df_no_nan.empty:
+                    raise PreventUpdate
             raise PreventUpdate
         elif col_name_logFC is None:
-            raise PreventUpdate
+            if isinstance(df[col_name_p_value][0], str) or np.isnan(df[col_name_p_value][0]):
+                df[col_name_p_value] = pd.to_numeric(df[col_name_p_value], errors='coerce')
+                df_no_nan = df.dropna(subset=[col_name_p_value])
+                df_no_nan = df_no_nan.reset_index(drop=True)
+                if df_no_nan.empty:
+                    raise PreventUpdate
+                elif not (df_no_nan[col_name_p_value] >= 0).all(axis=None):
+                    raise PreventUpdate
+                elif not (df_no_nan[col_name_p_value] <= 1).all(axis=None):
+                    raise PreventUpdate
 
-        if isinstance(df_no_nan[col_name_p_value][0], str):
             raise PreventUpdate
-        elif not (df_no_nan[col_name_p_value] >= 0).all(axis=None):
-            raise PreventUpdate
-        elif col_name_p_value is None:
-            raise PreventUpdate
+        else:
+            if col_name_logFC == col_name_p_value:
+                raise PreventUpdate
+            if (isinstance(df[col_name_logFC][0], str) or isinstance(df[col_name_p_value][0], str) or np.isnan(
+                    df[col_name_p_value][0]) or np.isnan(df[col_name_logFC][0])):
+                df[col_name_logFC] = pd.to_numeric(df[col_name_logFC], errors='coerce')
+                df[col_name_p_value] = pd.to_numeric(df[col_name_p_value], errors='coerce')
+                df_no_nan = df.dropna(subset=[col_name_logFC])
+                df_no_nan = df_no_nan.dropna(subset=[col_name_p_value])
+                df_no_nan = df_no_nan.reset_index(drop=True)
+                if df_no_nan.empty:
+                    raise PreventUpdate
+                elif not (df_no_nan[col_name_p_value] >= 0).all(axis=None):
+                    raise PreventUpdate
+                elif not (df_no_nan[col_name_p_value] <= 1).all(axis=None):
+                    raise PreventUpdate
 
-        if col_name_logFC == col_name_p_value:
-            raise PreventUpdate
+            else:
+                df_no_nan = df.dropna(subset=[col_name_p_value, col_name_logFC])
+                df_no_nan = df_no_nan.reset_index(drop=True)
+                if df_no_nan.empty:
+                    raise PreventUpdate
+                elif not (df_no_nan[col_name_p_value] >= 0).all(axis=None):
+                    raise PreventUpdate
 
-        df_no_nan['logP'] = df_no_nan[col_name_p_value].apply(lambda x: -np.log10(x))
+                elif not (df_no_nan[col_name_p_value] <= 1).all(axis=None):
+                    raise PreventUpdate
     else:
         raise PreventUpdate
+
+    if col_name_p_value is not None and col_name_logFC is not None:
+        min_p = df_no_nan[df_no_nan[col_name_p_value] > 0][col_name_p_value].min()
+        zero_p_val = df_no_nan[col_name_p_value] == 0
+        if input_value is None:
+            df_no_nan.loc[zero_p_val, col_name_p_value] = min_p
+        else:
+            df_no_nan.loc[zero_p_val, col_name_p_value] = input_value
+        df_no_nan['logP'] = df_no_nan[col_name_p_value].apply(lambda x: -np.log10(x))
 
     return df_no_nan
 
@@ -103,7 +121,6 @@ Function read dataframe from uploaded data, use right separator
                         io.StringIO(decoded.decode('utf-8')), sep=separ)
                 except:
                     df = pd.DataFrame()
-                    # raise PreventUpdate
 
         elif 'xls' in filename:
             # Assume that the user uploaded an excel file
@@ -111,7 +128,6 @@ Function read dataframe from uploaded data, use right separator
                 df = pd.read_excel(io.BytesIO(decoded))
             except:
                 df= pd.DataFrame()
-                # raise PreventUpdate
     except Exception as e:
         print(e)
         df = pd.DataFrame()

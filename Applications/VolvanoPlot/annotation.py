@@ -10,7 +10,6 @@ def update_annotations(row, columns):
     return row
 
 
-# def call_update_annotation(annotations, df_no_nan_local, dff, indices):
 def call_update_annotation(annotations, df_no_nan_local):
 
     """
@@ -24,8 +23,6 @@ def call_update_annotation(annotations, df_no_nan_local):
     if not annotations:
         annotations_str = None
     else:
-        # if indices is not None:
-        #     df_no_nan_local = df_no_nan_local.iloc[indices]
         df_no_nan_local = df_no_nan_local.apply(update_annotations, axis=1, columns=annotations)
         annotations_str = 'onhover'
     return [annotations_str, df_no_nan_local]

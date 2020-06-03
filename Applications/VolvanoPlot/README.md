@@ -1,1 +1,18 @@
 # Volcano_plot
+
+## About
+Volcano plot is interactive application in Python for your data visualization.
+
+You have to provide data columns for p-value and log fold change. Rows with missing values are removed in these columns. In Case of p-value=0, there is imputed the minimal value in the given dataset or it is possible specify the replacement value in the application.
+
+You can also specify other columns for annotations.
+
+It starts the simple python webserver inside the Volcano plot application folder and opens browser with the interactive Volcano plot aplicaton. 
+
+The application contains formular for setting input data of appliacation, Volcano plot, summary table, table of selected proteins from graph and table with dataset, which could be filtered. The graph shows the filtered data from the last table.
+
+## Local Deployment
+1. Clone the repository using ```git clone``` or download and extract the [ZIP file](https://github.com/OmicsWorkflows/KNIME_metanodes).
+2. Open terminal in the folder with volcano_plot.py, install pipenv and run ```pipenv install``` for creating virtualenv and installing dependencies from Pipfile.lock.
+3. Run application using ```pipenv run python volcano_plot.py``` or ```pipenv run python volcano_plot.py -f 'filepath'``` if you want to import your data from terminal.
+4. View Volcano plot in your browser at [localhost:8050]( http://127.0.0.1:8050/).
