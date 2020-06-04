@@ -16,3 +16,8 @@ The application contains formular for setting input data of appliacation, Volcan
 2. Open terminal in the folder with volcano_plot.py, install pipenv and run ```pipenv install``` for creating virtualenv and installing dependencies from Pipfile.lock.
 3. Run application using ```pipenv run python volcano_plot.py``` or ```pipenv run python volcano_plot.py -f 'filepath'``` if you want to import your data from terminal.
 4. View Volcano plot in your browser at [localhost:8050]( http://127.0.0.1:8050/).
+
+## List of used program and extensions and the respective licences
+- Python 3 (The Python consists of the following Python 3.6 License. Licence terms are available here: https://docs.python.org/3.6/license.html)
+- Dash (The Dash consists of the following MIT License. Licence terms are available here: https://github.com/plotly/dash/blob/master/LICENSE)
+- Dash-bio (The dash-bio consists of the following MIT License. Licence terms are available here: https://github.com/plotly/dash-bio/blob/master/LICENSE
