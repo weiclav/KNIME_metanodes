@@ -23,10 +23,6 @@
 </config>
 <entry key="customDescription" type="xstring" value=""/>
 <entry key="state" type="xstring" value="IDLE"/>
-<config key="nodecontainer_message">
-<entry key="type" type="xstring" value="WARNING"/>
-<entry key="message" type="xstring" value="CSV Writer 0:7:0:885: Errors overwriting node settings with flow variables: Unknown variable &quot;csv_file_path&quot;"/>
-</config>
 <entry key="virtual-in-ID" type="xint" value="2"/>
 <config key="inports">
 <config key="inport_0">
@@ -50,7 +46,7 @@
 </config>
 <config key="workflow_template_information">
 <entry key="role" type="xstring" value="Template"/>
-<entry key="timestamp" type="xstring" value="2020-06-04 13:10:03"/>
+<entry key="timestamp" type="xstring" value="2020-06-05 09:08:45"/>
 <entry key="sourceURI" type="xstring" isnull="true" value=""/>
 <entry key="templateType" type="xstring" value="SubNode"/>
 </config>

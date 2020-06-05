@@ -399,7 +399,17 @@ def create_layout(encoded_data, file_name):
                         page_action='native',
                         export_headers='names',
                         virtualization=True,
-                        fixed_rows={'headers': True, 'data': 0}
+                        fixed_rows={'headers': True, 'data': 0},
+                         style_table={
+                             'overflowX': 'auto'
+                         },
+                         style_cell={
+                             'height': 'auto',
+                             # all three widths are needed
+                             'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                             'whiteSpace': 'normal',
+                             'word-break': 'break-all'
+                         }
             ),
             html.Div(id='datatable-interactivity-container_1')]
 
@@ -458,6 +468,16 @@ def create_layout(encoded_data, file_name):
                 page_size=10,
                 virtualization=True,
                 fixed_rows={'headers': True, 'data': 0},
+                style_table={
+                    'overflowX': 'auto'
+                            },
+                style_cell={
+                    'height': 'auto',
+                    # all three widths are needed
+                    'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                    'whiteSpace': 'normal',
+                    'word-break' : 'break-all'
+                }
             ),
 
             html.Div(id='datatable-interactivity-container')],
