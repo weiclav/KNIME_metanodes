@@ -6,7 +6,34 @@ def update_annotations(row, columns):
     :param columns: (list of strings), column names
     :return: row of dataframe with added column, where is fused info from selected columns
     """
-    row['onhover'] = '<br>'.join([f"{str(column)}: {str(row[column])}" if row[column] is not None and row[column] is not np.nan else f"{str(column)}: {str('')}" for column in columns])
+
+    # for splitting too long annotations
+    row_local = row
+    for column in columns:
+        output_string = ''
+        string_row = row_local[column]
+        if isinstance(row_local[column], str):
+            if string_row is not None or string_row is not np.nan:
+                num_char = len(string_row)
+                if num_char > 50:
+                    div_num_char = int(num_char / 50)
+                    mod_num_char = num_char % 50
+                    for i in range(div_num_char):
+                        add_string = string_row[(i * 50): ((i + 1) * 50)]
+                        output_string = output_string + add_string + '<br>'
+
+                    output_string = output_string + string_row[div_num_char * 50:div_num_char * 50 + mod_num_char]
+                else:
+                    output_string = string_row
+            else:
+                output_string = ''
+        else:
+            output_string = row_local[column]
+
+        row_local[column] = output_string
+
+    row['onhover'] = '<br>'.join([f"{str(column)}: {str(row_local[column])} <br>" if row_local[column] is not None and row_local[column] is not np.nan else f"{str(column)}: {str('')} <br>" for column in columns])
+
     return row
 
 

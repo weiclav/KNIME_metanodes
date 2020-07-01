@@ -398,11 +398,7 @@ def create_layout(encoded_data, file_name):
                         page_size=10,
                         page_action='native',
                         export_headers='names',
-                        virtualization=True,
                         fixed_rows={'headers': True, 'data': 0},
-                         style_table={
-                             'overflowX': 'auto'
-                         },
                          style_cell={
                              'height': 'auto',
                              # all three widths are needed
@@ -466,17 +462,13 @@ def create_layout(encoded_data, file_name):
                 page_action="native",
                 page_current=0,
                 page_size=10,
-                virtualization=True,
-                fixed_rows={'headers': True, 'data': 0},
-                style_table={
-                    'overflowX': 'auto'
-                            },
+                fixed_rows={'headers': True},
                 style_cell={
                     'height': 'auto',
                     # all three widths are needed
-                    'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                    'minWidth': '180px', 'maxWidth': '180px', 'width': '180px',
                     'whiteSpace': 'normal',
-                    'word-break' : 'break-all'
+                    'word-break': 'break-all'
                 }
             ),
 
@@ -1468,10 +1460,13 @@ def define_callbacks():
                 arrow_x = []
                 arrow_y = []
 
-                for i in range(len(dff)):
-                    if i in derived_virtual_selected_rows:
-                        arrow_y.append(dff.loc[i]['logP'])
-                        arrow_x.append(dff.loc[i][col_name_logFC])
+                if len(derived_virtual_selected_rows) > 0:
+                    for i in derived_virtual_selected_rows:
+                        # if i in derived_virtual_selected_rows:
+                        dff_reset_index = dff
+                        dff_reset_index = dff_reset_index.reset_index(drop=True)
+                        arrow_y.append(dff_reset_index.loc[i]['logP'])
+                        arrow_x.append(dff_reset_index.loc[i][col_name_logFC])
 
                 #############
 
