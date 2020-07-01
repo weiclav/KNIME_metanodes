@@ -412,6 +412,7 @@ def create_layout(encoded_data, file_name):
 
         ),
         html.Br(),
+        html.Br(),
         html.Hr(
             style={
             'border': None,
