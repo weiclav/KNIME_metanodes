@@ -32,7 +32,7 @@ parser.add_argument('-f', '--file_input', type=str,
 
 # initialization of app + import css
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__)
 
 # definition of category table
 category_significant = 'Significant'
@@ -80,34 +80,19 @@ def create_layout(encoded_data, file_name):
     # https://dash.plot.ly/dash-core-components  - dash documentation for components
     # https://dash.plot.ly/datatable/reference - dash documentation for interactivity table
     return html.Div(id='page-content', children=[
+        html.Div(className='form_graph', children=[
 
-        html.Div(style={
-                        'display': 'inline-block',
-                        'width': '25%',
-                        'height': '700px'
-                        }, children=[
+        html.Div(className='form',
+                 children=[
             html.Div(id='vp-control-tabs', className='control-tabs',
-                     style={
-                         'height': '100%',
-                         'borderWidth': '1px',
-                         'borderStyle': 'solid',
-                         'borderColor': '#bbbbbb',
-                         'margin-bottom': '2px',
-                         'display': 'flex',
-                         'flex-direction': 'column',
-                         'flex-wrap': 'wrap',
-                         'justify-content': 'space-between'
-
-
-                     }, children=[
+                     children=[
                 html.Div(children=[dcc.Tabs(id='vp-tabs', value='Upload_data', children=[
                     dcc.Tab(
+                        className='tab',
                         label='Upload data',
                         value="Upload_data",
-                        style={
-                            'z-index': '1',  # for more area to click
-                        },
-                        children=html.Div(className='control-tab', style={'margin': '10px'}, children=[
+                        children=html.Div(className='control-tab',
+                                          children=[
                             'Upload data *',
                             dcc.Upload(
                                 id='upload-data',
@@ -119,18 +104,6 @@ def create_layout(encoded_data, file_name):
                                 ]),
                                 contents=encoded_data,
                                 filename=file_name,
-                                style={
-                                    'width': '100%',
-                                    'borderWidth': '1px',
-                                    'borderStyle': 'solid',
-                                    'borderRadius': '5px',
-                                    'textAlign': 'center',
-                                    'color': '#555',
-                                    'borderColor': '#bbbbbb',
-                                    'z-index': '1',
-                                    'padding-top': '10px',
-                                    'padding-bottom': '10px'
-                                },
                                 # Allow multiple files to be uploaded
                                 multiple=True
                             ),
@@ -144,15 +117,15 @@ def create_layout(encoded_data, file_name):
                                     {'label': "Comma", 'value': ","}  # should I add semothing else?
                                 ],
                                 value=None,
-                                style={'textAlign': 'left'}
                             )
                         ],
                         )
                     ),
                     dcc.Tab(
+                        className='tab',
                         label='Column select',
-                        style={'z-index': '1'}, # for more area to click
-                        children=html.Div(className='control-tab', style={'margin': '10px'}, children=[
+                        children=html.Div(className='control-tab',
+                                          children=[
                                 'Select log fold change column *',
                                 dcc.Dropdown(
                                     id='logFC-dataset-dropdown'
@@ -179,12 +152,10 @@ def create_layout(encoded_data, file_name):
                         )
                     ),
                     dcc.Tab(
+                        className='tab',
                         label='Zero value replace',
-                        style={
-                            'z-index': '1',  # for more area to click
-
-                        },
-                        value='view', children=html.Div(className='control-tab', style={'margin': '10px'}, children=[
+                        value='view', children=html.Div(className='control-tab',
+                                                        children=[
                             "Specify value to replace zero p-value",
                             html.Br(),
                             html.Form(children=[dcc.Input(
@@ -192,7 +163,6 @@ def create_layout(encoded_data, file_name):
                                 min=1 * (10 ** (-6)),
                                 max=1,
                                 step=0.001,
-                                style={'width': '100%'}
                             )],
                                 # noValidate='novalidate',
                                 action="javascript:void(0);"),
@@ -206,24 +176,17 @@ def create_layout(encoded_data, file_name):
                 ),]),
 
                 # html.Br(),
-                html.Div(
-                 style={
-                    'display': 'flex',
-                    'flex-direction': 'row',
-                     'flex-wrap': 'wrap',
-                     'justify-content': 'space-between'
-                 },
+                html.Div(className='form-markdown_button',
                  children=[
-                     dcc.Markdown(children = ['\* Required'],
-                         style={
-                            'margin': '10px',
-                         }),
-                    html.Button(id='submit-button', n_clicks=0, children='Submit', disabled=True, title='Set required values in Upload data and Column select.',
-                                style={
-                                    'margin': '10px',
-                                    'border-color': '#b8b0b0',
-                                    'color': '#ccb6b6'
-                                    },
+                     dcc.Markdown(
+                         id='required-markdown',
+                         children=['\* Required'],
+                     ),
+                    html.Button(id='submit-button',
+                                n_clicks=0,
+                                children='Submit',
+                                disabled=True,
+                                title='Set required values in Upload data and Column select.',
                                 )
                          ]
 
@@ -233,15 +196,8 @@ def create_layout(encoded_data, file_name):
                 ],
                      )
         ]),
-        html.Div(style={
-                'margin': '10px',
-                'float': 'right',
-                'display': 'inline-block',
-                'width': '70%',
-                'height': '700px',
-                'padding-bottom': '40px'
-
-                }, children=[
+        html.Div(className='graph',
+                 children=[
       'Log fold-change threshold',
                # range slider for log fold change
                dcc.RangeSlider(
@@ -262,28 +218,20 @@ def create_layout(encoded_data, file_name):
                ),
                 html.Div(
                         children=[
-                            html.P(style={
-                               'display':'inline-block',
-                                'padding':'5px'
-                           },
+                            html.P(
+                                className='info',
                                 children=['Type a number to set the rangeslider values:  ']),
                             html.Form(
+                                className='form-inputer',
                                 children=[dcc.Input(
                                     id="value_logFC_slider_inputer", type="number", placeholder="1",
                                     value=1,
-                                    style={
-                                        'margin': '3px'
-                                    }
                                     )
 
                                 ],
                                 noValidate='novalidate',
                                 action="javascript:void(0);",
-                                style={
-                                   'display':'inline-block',
-                               },
-
-                        )]),
+                            )]),
 
                html.Br(),
 
@@ -308,12 +256,11 @@ def create_layout(encoded_data, file_name):
                            )]),
                        html.Div(
                         children=[
-                            html.P(style={
-                               'display':'inline-block',
-                                'padding':'5px'
-                           },
+                            html.P(
+                                className='info',
                                 children=['Type a number to set the slider value:  ']),
                             html.Form(
+                                className='form-inputer',
                                 children=[dcc.Input(
                                     id="value_p_slider_inputer", type="number", placeholder="0.05",
                                     min=0.000001,
@@ -321,13 +268,8 @@ def create_layout(encoded_data, file_name):
                                     step=0.000001,
                                     value=0.05,
                                     )],
-                                # noValidate='novalidate',
                                 action="javascript:void(0);",
-                                style={
-                                   'display':'inline-block',
-                               },
-
-                        )]),
+                            )]),
 
            ]),
             dcc.Loading(className='dashbio-loading', style={'height': '450px'}, children=[
@@ -344,12 +286,13 @@ def create_layout(encoded_data, file_name):
                         ),
         ]
         ),
+        ]),
 
         html.Br(),
         html.Div(
             children=[
                 html.Div(
-                    style={'margin-top': '30px'},
+                    className='summary-table',
                     children=[
                     html.H6('Summary table'),
                     dash_table.DataTable(
@@ -366,19 +309,12 @@ def create_layout(encoded_data, file_name):
         # table for data from lasso selection
 
         html.Hr(
-            style={
-            'border': None,
-            'border-top': '3px double #bbb',
-            'overflow': 'visible',
-            'text-align': 'center',
-            'height': '5px',
-            'border-color': '#bbb'
-                    }
+            className='line',
                 ),
         html.H6('Table of selected proteins'),
         html.Div(
                  children=[
-                     html.Form(children = [dcc.Input(id="input_rows_per_page_1", type="number", placeholder="10",
+                     html.Form(children=[dcc.Input(id="input_rows_per_page_1", type="number", placeholder="10",
                         min=0,
                         max=250,
                         step=1,
@@ -414,24 +350,17 @@ def create_layout(encoded_data, file_name):
         html.Br(),
         html.Br(),
         html.Hr(
-            style={
-            'border': None,
-            'border-top': '3px double #bbb',
-            'overflow': 'visible',
-            'text-align': 'center',
-            'height': '5px',
-            'border-color': '#bbb'
-                    }
+            className='line',
                 ),
         html.H6('Table for filtering proteins in the graph'),
         html.Div(
             children=[
                 html.Div(children=[
-                    html.Button(id='reset-filters-button', children='Reset filtering',  style={'display': 'inline-block',
-                                                                                               'margin-right': '5px'
-                                                                                               },
+                    html.Button(className='reset_filtering', id='reset-filters-button', children='Reset filtering',
                                 ),
-                    html.Form(children=[dcc.Input(id="input_rows_per_page_2", type="number", placeholder="10",
+                    html.Form(
+                        className='form-inputer',
+                        children=[dcc.Input(id="input_rows_per_page_2", type="number", placeholder="10",
                                             min=0,
                                             max=250,
                                             step=1,
@@ -442,7 +371,6 @@ def create_layout(encoded_data, file_name):
                                           ],
                          action="javascript:void(0);",
                          title='Rows per page in the table',
-                         style={'display': 'inline-block',}
                               ),
 
                                     ],
@@ -477,7 +405,7 @@ def create_layout(encoded_data, file_name):
 
         ),
         html.Div(style={"display": "none"},
-                 children=[ dcc.Slider(
+                 children=[dcc.Slider(
             id='hide-slider',
             value=-np.log10(0.05),
             max=8,
@@ -1508,6 +1436,7 @@ def define_callbacks():
                     ay=-30,
                     opacity=0.8
                 ))
+
 
                 return fig
 

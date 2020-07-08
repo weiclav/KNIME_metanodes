@@ -1,0 +1,110 @@
+.form_graph{
+    min-width: 330px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    
+}
+
+.form{
+    width: 320px;
+    height: 650px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.graph{
+    width: calc(100% - 340px);
+    min-width: 550px;
+    margin-left: 10px;
+    flex-grow: 1;
+}
+
+.control-tabs{
+    height: 100%;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #bbbbbb;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.control-tab {
+    margin: 10px;
+}
+
+.form-markdown_button{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.info{
+    display: inline-block;
+    padding: 5px;
+}
+
+.tab{
+    z-index: 1;
+}
+
+.form-inputer{
+    display: inline-block;
+}
+
+.summary-table{
+    margin-top: 30px;
+}
+
+.line{
+    border: none;
+    border-top: 3px double #bbbbbb;
+    overflow: visible;
+    text-align: center;
+    height: 5px;
+    border-color: #bbbbbb;
+}
+
+#upload-data{
+    width: 100%;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+    text-align: center;
+    color: #555555;
+    border-color: #bbbbbb;
+    z-index: 1;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#separator-dropdown{
+    text-align: left;
+}
+
+#input_zero_value_replace{
+    width: 100%;
+}
+
+#required-markdown{
+    margin: 10px;
+}
+
+#submit-button{
+    margin: 10px;
+    border-color: #b8b0b0;
+    color: #ccb6b6;
+}
+
+#value_logFC_slider_inputer{
+    margin: 3px;
+}
+
+#reset_filtering{
+    display: inline-block;
+    margin-right: 5px;
+}
+
