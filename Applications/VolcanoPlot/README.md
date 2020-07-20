@@ -1,15 +1,15 @@
 # Volcano_plot
 
 ## About
-Volcano plot is interactive application in Python for your data visualization.
+Volcano plot is an interactive application in Python for the data visualization.
 
-You have to provide data columns for p-value and log fold change. Rows with missing values are removed in these columns. In Case of p-value=0, there is imputed the minimal value in the given dataset or it is possible specify the replacement value in the application.
+You have to provide data columns for p-value and log fold change. Rows containing missing values are removed. In case of p-value = 0, there is imputed the minimal value in the given dataset or it is possible specify the replacement value in the application.
 
 You can also specify other columns for annotations.
 
-It starts the simple python webserver inside the Volcano plot application folder and opens browser with the interactive Volcano plot aplicaton. 
+It starts the simple python webserver inside the Volcano plot application folder and opens the browser with the interactive Volcano plot application. 
 
-The application contains formular for setting input data of appliacation, Volcano plot, summary table, table of selected proteins from graph and table with dataset, which could be filtered. The graph shows the filtered data from the last table.
+The application contains a form for setting the input data, Volcano plot, summary table, table of selected proteins from graph and table with dataset, which can be filtered. The graph shows the filtered data from the last table.
 
 ## Local Deployment
 1. Clone the repository using ```git clone``` or download and extract the [ZIP file](https://github.com/OmicsWorkflows/KNIME_metanodes).

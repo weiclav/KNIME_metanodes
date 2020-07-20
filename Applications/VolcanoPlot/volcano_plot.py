@@ -24,6 +24,7 @@ import plotly.graph_objects as go
 import annotation
 import upload_data
 import select_data_table_match
+import set_colors
 
 parser = argparse.ArgumentParser(description='Set path for data.')
 parser.add_argument('-f', '--file_input', type=str,
@@ -272,6 +273,33 @@ def create_layout(encoded_data, file_name):
                             )]),
 
            ]),
+            html.Br(),
+            html.Div(
+                className='graph-setter',
+                children=[
+                dcc.Checklist(
+                    id='colorscheme-check',
+                    options=[{'label': 'Colors for colorblind', 'value': 'yes'}]
+                ),
+
+                    html.P(
+                        id='text-point-size',
+                        children=['Point size:']),
+                html.Form(
+                    id='form-point-size',
+                    children=[dcc.Input(
+                    id="input-point-size", type="number", placeholder="6",
+                    min=0,
+                    max=30,
+                    step=0.5,
+                    value=6
+                    )],
+                    # noValidate='novalidate',
+                    action="javascript:void(0);"),
+                # html.A(href='test.txt', download='testing.txt', children=['Select file'])
+
+            ]),
+
             dcc.Loading(className='dashbio-loading', style={'height': '450px'}, children=[
                dcc.Graph(
                    id='my-dashbio-volcanoplot',
@@ -1299,6 +1327,8 @@ def define_callbacks():
             dash.dependencies.Input('volcanoplot-input_p', 'value'),
             dash.dependencies.Input('volcanoplot-input', 'value'),
             dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('colorscheme-check', 'value'),
+            dash.dependencies.Input('input-point-size', 'value')
 
         ],
         [
@@ -1312,7 +1342,7 @@ def define_callbacks():
         ]
 
     )
-    def update_graph(hidden_div, rows, indices, derived_virtual_selected_rows, effects_p, effects, hide_slider, contents, filename,
+    def update_graph(hidden_div, rows, indices, derived_virtual_selected_rows, effects_p, effects, hide_slider, colorblind, point_size, contents, filename,
                      col_name_logFC, col_name_p_value, annotations, separ, input_value):
         """
         Function for update graph.
@@ -1358,34 +1388,12 @@ def define_callbacks():
                 if dff.empty:
                     dff = df_no_nan_local
 
-                # color part
-                #############
-                category_color = []
-                significant_color = 'rgba(255,221,0)'
-                sign_up_color = 'rgba(255,0,0)'
-                sign_down_color = 'rgba(0,255,0)'
-                not_sign_color = 'rgba(0,170,255)'
+                colors = set_colors.set_color(dff, derived_virtual_selected_rows, col_name_logFC, col_name_p_value, effects, effects_p,
+                          colorblind)
+                if point_size is None:
+                    point_size = 6
 
-                for index, row in dff.iterrows():
-
-                    if row[col_name_logFC] <= effects[1] and row[col_name_logFC] >= effects[0] and -np.log10(
-                            row[col_name_p_value]) > effects_p:
-                        category_color.append(significant_color)
-
-                    elif row[col_name_logFC] > effects[1] and -np.log10(row[col_name_p_value]) > effects_p:
-                        category_color.append(sign_up_color)
-
-                    elif row[col_name_logFC] < effects[0] and -np.log10(row[col_name_p_value]) > effects_p:
-                        category_color.append(sign_down_color)
-
-                    else:
-                        category_color.append(not_sign_color)
-
-                colors = ['rgba(0,0,0)' if i in derived_virtual_selected_rows else category_color[i]
-                          for i in range(len(dff))]
-
-                point_sizes = [10 if i in derived_virtual_selected_rows else 6
-                               for i in range(len(dff))]
+                point_sizes = [point_size if i in derived_virtual_selected_rows else point_size for i in range(len(dff))]
                 arrow_x = []
                 arrow_y = []
 
@@ -1411,12 +1419,16 @@ def define_callbacks():
                     point_size=point_sizes,
                     col=colors,
                     genomewideline_value=effects_p,
+                    genomewideline_color='#000000',
                     effect_size_line=effects,
+                    effect_size_line_color='#000000',
+
                     highlight_color=None,
                     highlight=None,
                     annotation=annotations_str,
                     snp=None,
-                    gene=None)
+                    gene=None
+                )
 
                 for i in range(len(arrow_x)):
                     fig.add_annotation(
@@ -1434,10 +1446,15 @@ def define_callbacks():
                     startarrowsize=5,
                     ax=20,
                     ay=-30,
-                    opacity=0.8
+                    opacity=1,
+                    arrowcolor='#000000'
                 ))
 
+                fig.update_layout(plot_bgcolor='#ffffff')
 
+                # fig.write_html("file.html")
+                fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#dbdbdb')
+                fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#dbdbdb')
                 return fig
 
             else:
