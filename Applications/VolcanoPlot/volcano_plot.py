@@ -4,7 +4,9 @@
 # In[9]:
 import base64
 import io
-
+import os
+import time
+import sys
 import pandas as pd
 
 import dash
@@ -18,8 +20,12 @@ import csv
 import base64
 import mimetypes
 import argparse
+from flask import Flask, send_from_directory
+from urllib.parse import quote as urlquote
 from dash_table.Format import Format
 import plotly.graph_objects as go
+import uuid
+import webbrowser
 
 import annotation
 import upload_data
@@ -33,7 +39,24 @@ parser.add_argument('-f', '--file_input', type=str,
 
 # initialization of app + import css
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__)
+# app = dash.Dash(__name__)
+
+########################################################################################################################
+server = Flask(__name__)
+app = dash.Dash(server=server)
+UPLOAD_DIRECTORY = os.getcwd()
+if not os.path.exists(UPLOAD_DIRECTORY):
+    os.makedirs(UPLOAD_DIRECTORY)
+
+@server.route("/download/<path:filename>")
+def download(filename):
+    """Serve a file from the upload directory."""
+    return send_from_directory(UPLOAD_DIRECTORY, filename, as_attachment=True, cache_timeout=180)
+
+########################################################################################################################
+
+
+# app = dash.Dash(__name__)
 
 # definition of category table
 category_significant = 'Significant'
@@ -279,7 +302,7 @@ def create_layout(encoded_data, file_name):
                 children=[
                 dcc.Checklist(
                     id='colorscheme-check',
-                    options=[{'label': 'Colors for colorblind', 'value': 'yes'}]
+                    options=[{'label': 'Colorblind mode', 'value': 'yes'}]
                 ),
 
                     html.P(
@@ -296,9 +319,16 @@ def create_layout(encoded_data, file_name):
                     )],
                     # noValidate='novalidate',
                     action="javascript:void(0);"),
-                # html.A(href='test.txt', download='testing.txt', children=['Select file'])
+                    html.A(id='link_interactive_graph', children='file.html', style = {'display': 'none'}),
+                    # html.P(
+                    #     id='text-dirfile',
+                    #     children=['Directory path for downloading interactive graph:']),
+                    # dcc.Input(id='input-download-filepath', type='text', placeholder='file path'),
+                    # html.Button(id='download', children='download'),
+                    html.Button(id='download-server-client', children='Export'),
+                    dcc.Location(id='url', refresh=False)
 
-            ]),
+                ]),
 
             dcc.Loading(className='dashbio-loading', style={'height': '450px'}, children=[
                dcc.Graph(
@@ -451,7 +481,7 @@ def create_layout(encoded_data, file_name):
 
 def define_callbacks():
     '''
-    Function which coll alldefined callbacks
+    Function which call all defined callbacks
     '''
 
     @app.callback(
@@ -1313,7 +1343,81 @@ def define_callbacks():
             table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
             return [df_no_nan_local.to_dict('records'), table_columns]
 
+    # @app.callback(
+    #     dash.dependencies.Output('download', 'title'),
+    #     [dash.dependencies.Input('download', 'n_clicks')],
+    #     [
+    #      dash.dependencies.State('my-dashbio-volcanoplot', 'figure'),
+    #      dash.dependencies.State('download', 'title'),
+    #     dash.dependencies.State('input-download-filepath', 'value')
+    #     ]
+    # )
+    # def download_interactive_graph(download_graph, graph_figure, button_title, dirpath):
+    #     filename = 'file_graph'
+    #     number = 0
+    #     if dirpath:
+    #         if os.path.isdir(dirpath):
+    #             filepath = dirpath + os.path.sep + filename + '.html'
+    #             while os.path.isfile(filepath):
+    #                 number += 1
+    #                 str_num = str(number)
+    #                 filepath = dirpath + os.path.sep + filename + '(' + str_num + ')' + '.html'
+    #             if graph_figure:
+    #                 fig = go.Figure(graph_figure)
+    #                 fig.write_html(filepath)
+    #
+    #     return button_title
 
+    @app.callback(
+        dash.dependencies.Output('link_interactive_graph', 'href'),
+        [dash.dependencies.Input('download-server-client', 'n_clicks')],
+        [
+            dash.dependencies.State('my-dashbio-volcanoplot', 'figure'),
+            dash.dependencies.State('link_interactive_graph', 'href'),
+        ]
+    )
+    def download_interactive_graph_and_delete_old_files(download_graph, graph_figure, location):
+        filename = uuid.uuid4().hex
+
+        if not os.path.exists(UPLOAD_DIRECTORY):
+            os.makedirs(UPLOAD_DIRECTORY)
+
+        path = os.path.join(os.getcwd(), '.downloads')
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        print(path)
+        now = time.time()
+
+        for f in os.listdir(path):
+            f = os.path.join(path, f)
+            if os.stat(f).st_mtime < now - 86400 and f != os.path.join(path, '1.html'):
+
+                if os.path.isfile(f):
+                    os.remove(os.path.join(path, f))
+
+        filename = '.downloads' + os.path.sep + filename + '.html'
+        if graph_figure:
+            fig = go.Figure(graph_figure)
+            fig.write_html(filename)
+            location = "/download/{}".format(urlquote(filename))
+
+        return location
+
+    @app.callback(
+        dash.dependencies.Output('link_interactive_graph', 'title'),
+        [dash.dependencies.Input('link_interactive_graph', 'href')],
+        [
+         dash.dependencies.State('url', 'href'),
+         dash.dependencies.State('link_interactive_graph', 'title'),
+        ]
+        )
+    def open_browser(location, url, title):
+        if location:
+            path = url+location
+            webbrowser.open(path)
+
+        return title
 
 
     @app.callback(
@@ -1329,7 +1433,6 @@ def define_callbacks():
             dash.dependencies.Input('hide-slider', "value"),
             dash.dependencies.Input('colorscheme-check', 'value'),
             dash.dependencies.Input('input-point-size', 'value')
-
         ],
         [
             dash.dependencies.State('upload-data', 'contents'),
@@ -1451,8 +1554,6 @@ def define_callbacks():
                 ))
 
                 fig.update_layout(plot_bgcolor='#ffffff')
-
-                # fig.write_html("file.html")
                 fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#dbdbdb')
                 fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#dbdbdb')
                 return fig
@@ -1463,9 +1564,12 @@ def define_callbacks():
             return {'data': [], 'layout': {}, 'frames': []}
 
 
+
 if __name__ == '__main__':
     args = parser.parse_args()
     encoded_data, file_name = prepare_data(args.file_input)
     app.layout = create_layout(encoded_data, file_name)
     define_callbacks()
     app.run_server(debug=False)
+
+
