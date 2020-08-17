@@ -8,7 +8,7 @@ verify_ssl = true
 [packages]
 dash = "==1.13.4"
 dash-bio = "==0.4.8"
-pandas = "==1.0.4"
+pandas = "==1.0.5"
 argparse = "==1.4.0"
 numpy = "==1.18.1"
 

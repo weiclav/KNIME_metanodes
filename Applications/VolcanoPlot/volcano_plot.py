@@ -372,7 +372,10 @@ def create_layout(encoded_data, file_name):
         html.H6('Table of selected proteins'),
         html.Div(
                  children=[
-                     html.Form(children=[dcc.Input(id="input_rows_per_page_1", type="number", placeholder="10",
+                     html.Div(children=[
+                     html.Button(className='reset_filtering', id='reset-filters-button_1', children='Reset filtering',
+                                 ),
+                     html.Form(className='form-inputer', children=[dcc.Input(id="input_rows_per_page_1", type="number", placeholder="10",
                         min=0,
                         max=250,
                         step=1,
@@ -385,6 +388,7 @@ def create_layout(encoded_data, file_name):
         ),
 
 
+                 ]),
 
                      dash_table.DataTable(
                         id='selected-data-table',
@@ -393,6 +397,10 @@ def create_layout(encoded_data, file_name):
                         page_action='native',
                         export_headers='names',
                         fixed_rows={'headers': True, 'data': 0},
+                         editable=False,
+                         sort_action="native",
+                         sort_mode="multi",
+                         page_current=0,
                          style_cell={
                              'height': 'auto',
                              # all three widths are needed
@@ -519,6 +527,41 @@ def define_callbacks():
         derived_filter_query_structure = {}
         filter_query = ''
         return [derived_virtual_data, derived_virtual_indices, derived_virtual_selected_rows, derived_virtual_selected_row_ids, selected_rows, derived_filter_query_structure, filter_query, hide_slider]
+
+    @app.callback(
+        [
+            dash.dependencies.Output('selected-data-table', "derived_virtual_data"),
+            dash.dependencies.Output('selected-data-table', "derived_virtual_indices"),
+            dash.dependencies.Output('selected-data-table', "derived_virtual_selected_rows"),
+            dash.dependencies.Output('selected-data-table', "derived_virtual_selected_row_ids"),  #
+            dash.dependencies.Output('selected-data-table', "selected_rows"),
+            dash.dependencies.Output('selected-data-table', "derived_filter_query_structure"),#
+            dash.dependencies.Output('selected-data-table', "filter_query"),#
+        ],
+        [
+            dash.dependencies.Input('reset-filters-button_1', 'n_clicks'),
+            dash.dependencies.Input('upload-data', 'contents'),
+        ],
+        [dash.dependencies.State('hide-slider', "value"),]
+    )
+    def reset_filtering_selected_table(reset_button, upload_data, hide_slider):
+        """
+        Function which reset all parameters of components in case it's not output of some else function. The parameters
+        are reset, when new data are upload or the form is changed or reset filtering with button.
+        :param reset_button: number - number of clicks to button, used to for updating aplication, when it is clicked ane all filtering is removed
+        :param upload_data: string - data encoded by base64, changed with new uploaded data
+        :param hide_slider: value of invisible slider is used, for making something like buffer
+        :return: list of parameters of components
+        """
+
+        selected_rows = []
+        derived_virtual_data = []
+        derived_virtual_indices = []
+        derived_virtual_selected_rows = []
+        derived_virtual_selected_row_ids = []
+        derived_filter_query_structure = {}
+        filter_query = ''
+        return [derived_virtual_data, derived_virtual_indices, derived_virtual_selected_rows, derived_virtual_selected_row_ids, selected_rows, derived_filter_query_structure, filter_query]
 
     @app.callback(
         [
@@ -1183,7 +1226,6 @@ def define_callbacks():
             else:
                 df_no_nan_local = pd.DataFrame()
                 filter_action = "none"
-                filter_query = ''
         else:
             df_no_nan_local = pd.DataFrame()
             filter_action = "none"
@@ -1242,7 +1284,6 @@ def define_callbacks():
         if old_data==None and new_data != None or old_data == new_data:
             if contents:
                 df_no_nan_local = upload_data.get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_value)
-
                 for index, row in df_no_nan_local.iterrows():
 
                     if row[col_name_logFC] < threshold_logFC[1] and row[col_name_logFC] > threshold_logFC[0] and -np.log10(
@@ -1261,6 +1302,7 @@ def define_callbacks():
                 return category_table.to_dict('records')
             else:
                 return category_table.to_dict('records')
+
         else:
             return category_table.to_dict('records')
 
@@ -1268,7 +1310,8 @@ def define_callbacks():
     @app.callback(
         [
             dash.dependencies.Output('selected-data-table', 'data'),
-            dash.dependencies.Output('selected-data-table', 'columns')
+            dash.dependencies.Output('selected-data-table', 'columns'),
+            dash.dependencies.Output('selected-data-table', 'filter_action')
         ],
         [
             dash.dependencies.Input('hidden-div', 'children'),
@@ -1308,6 +1351,8 @@ def define_callbacks():
         if old_data == None and new_data != None or old_data == new_data:
             if contents:
                 df_no_nan_local = upload_data.get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_value)
+                filter_action = "native"
+
 
                 index_list = []
                 selected_table = pd.DataFrame(columns=[i for i in df_no_nan_local.columns])
@@ -1332,41 +1377,20 @@ def define_callbacks():
 
                 table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
 
-                return [selected_table_local.to_dict('records'), table_columns]
+                return [selected_table_local.to_dict('records'), table_columns, filter_action]
 
             else:
                 df_no_nan_local = pd.DataFrame()
+                filter_action = "none"
+
                 table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
-                return [df_no_nan_local.to_dict('records'), table_columns]
+                return [df_no_nan_local.to_dict('records'), table_columns, filter_action]
         else:
             df_no_nan_local = pd.DataFrame()
+            filter_action = "none"
             table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
-            return [df_no_nan_local.to_dict('records'), table_columns]
+            return [df_no_nan_local.to_dict('records'), table_columns, filter_action]
 
-    # @app.callback(
-    #     dash.dependencies.Output('download', 'title'),
-    #     [dash.dependencies.Input('download', 'n_clicks')],
-    #     [
-    #      dash.dependencies.State('my-dashbio-volcanoplot', 'figure'),
-    #      dash.dependencies.State('download', 'title'),
-    #     dash.dependencies.State('input-download-filepath', 'value')
-    #     ]
-    # )
-    # def download_interactive_graph(download_graph, graph_figure, button_title, dirpath):
-    #     filename = 'file_graph'
-    #     number = 0
-    #     if dirpath:
-    #         if os.path.isdir(dirpath):
-    #             filepath = dirpath + os.path.sep + filename + '.html'
-    #             while os.path.isfile(filepath):
-    #                 number += 1
-    #                 str_num = str(number)
-    #                 filepath = dirpath + os.path.sep + filename + '(' + str_num + ')' + '.html'
-    #             if graph_figure:
-    #                 fig = go.Figure(graph_figure)
-    #                 fig.write_html(filepath)
-    #
-    #     return button_title
 
     @app.callback(
         dash.dependencies.Output('link_interactive_graph', 'href'),
