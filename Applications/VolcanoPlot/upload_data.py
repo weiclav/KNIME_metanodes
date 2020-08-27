@@ -96,6 +96,7 @@ def dataframe_edit(df, col_name_p_value, col_name_logFC, input_value):
     return df_no_nan
 
 
+
 def parse_contents(contents, filename, separ):
     """
 Function read dataframe from uploaded data, use right separator

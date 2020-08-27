@@ -22,7 +22,6 @@ import mimetypes
 import argparse
 from flask import Flask, send_from_directory
 from urllib.parse import quote as urlquote
-from dash_table.Format import Format
 import plotly.graph_objects as go
 import uuid
 import webbrowser
@@ -31,6 +30,7 @@ import annotation
 import upload_data
 import select_data_table_match
 import set_colors
+import formatter
 
 parser = argparse.ArgumentParser(description='Set path for data.')
 parser.add_argument('-f', '--file_input', type=str,
@@ -169,6 +169,14 @@ def create_layout(encoded_data, file_name):
                                     id='annotations_input',
                                     multi=True,
                                 ),
+
+                                html.Br(),
+
+                                'Select numeric column(s)',
+                                dcc.Dropdown(
+                                    id='numeric_columns',
+                                    multi=True,
+                                ),
                                 html.Br(),
                                 dcc.Markdown(id='prevent-update-info', children=[''' '''])
 
@@ -195,7 +203,8 @@ def create_layout(encoded_data, file_name):
 
                         ]
                         )
-                    )
+                    ),
+                    #
                 ]
                 ),]),
 
@@ -464,7 +473,7 @@ def create_layout(encoded_data, file_name):
                     'minWidth': '180px', 'maxWidth': '180px', 'width': '180px',
                     'whiteSpace': 'normal',
                     'word-break': 'break-all'
-                }
+                },
             ),
 
             html.Div(id='datatable-interactivity-container')],
@@ -569,7 +578,8 @@ def define_callbacks():
          dash.dependencies.Output('reset-filters-button', 'n_clicks'),
          dash.dependencies.Output('logFC-dataset-dropdown', 'value'),
          dash.dependencies.Output('P-value-dataset-dropdown', 'value'),
-         dash.dependencies.Output('annotations_input', 'value')
+         dash.dependencies.Output('annotations_input', 'value'),
+         dash.dependencies.Output('numeric_columns', 'value')
          ],
         [dash.dependencies.Input('upload-data', 'contents')],
         [
@@ -577,11 +587,12 @@ def define_callbacks():
             dash.dependencies.State('reset-filters-button', 'n_clicks'),
             dash.dependencies.State('logFC-dataset-dropdown', 'value'),
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
-            dash.dependencies.State('annotations_input', 'value')
+            dash.dependencies.State('annotations_input', 'value'),
+            dash.dependencies.State('numeric_columns', 'value')
         ]
 
     )
-    def update_new_data(contents, selectedData,  filter_button, value_log_fc, value_p, value_annot):
+    def update_new_data(contents, selectedData,  filter_button, value_log_fc, value_p, value_annot, value_num_columns):
         """
         Function, which save in global vatiable new_data, that new data are uploaded and reset values of dropdowns in the form
         :param contents: string - data encoded by base64, changed with new uploaded data
@@ -599,7 +610,8 @@ def define_callbacks():
         value_log_fc = None
         value_p = None
         value_annot = []
-        return [selectedData, filter_button, value_log_fc, value_p, value_annot]
+        value_num_columns = []
+        return [selectedData, filter_button, value_log_fc, value_p, value_annot, value_num_columns]
 
 
     @app.callback(
@@ -740,7 +752,8 @@ def define_callbacks():
         [
             dash.dependencies.Output('logFC-dataset-dropdown', 'options'),
             dash.dependencies.Output('P-value-dataset-dropdown', 'options'),
-            dash.dependencies.Output('annotations_input', 'options')
+            dash.dependencies.Output('annotations_input', 'options'),
+            dash.dependencies.Output('numeric_columns', 'options')
         ],
         [
             dash.dependencies.Input('hide-slider', "value"),
@@ -749,7 +762,6 @@ def define_callbacks():
         [
             dash.dependencies.State('upload-data', 'contents'),
             dash.dependencies.State('upload-data', 'filename'),
-            #dash.dependencies.State('separator-dropdown', 'value')
         ]
     )
     def update_dropdown(hide_slider, separ, contents, filename):
@@ -782,7 +794,7 @@ def define_callbacks():
                 }
                 for dset in df_no_nan_local.columns
             ]
-        return [option, option, option]
+        return [option, option, option, option]
 
     def enable_submit_button():
         """
@@ -1185,10 +1197,13 @@ def define_callbacks():
             dash.dependencies.Output('datatable-interactivity', 'data'),
             dash.dependencies.Output('datatable-interactivity', 'columns'),
             dash.dependencies.Output('datatable-interactivity', 'filter_action'),
+            dash.dependencies.Output('datatable-interactivity', 'style_data_conditional')
         ],
         [
             dash.dependencies.Input('hidden-div', 'children'),
             dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('volcanoplot-input', 'value'),
+            dash.dependencies.Input('volcanoplot-input_p', 'value'),
         ],
         [
             dash.dependencies.State('upload-data', 'contents'),
@@ -1196,10 +1211,11 @@ def define_callbacks():
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
             dash.dependencies.State('logFC-dataset-dropdown', 'value'),
             dash.dependencies.State('separator-dropdown', 'value'),
-            dash.dependencies.State('input_zero_value_replace', 'value')
+            dash.dependencies.State('input_zero_value_replace', 'value'),
+            dash.dependencies.State('numeric_columns', 'value')
         ]
     )
-    def update_interactivity_table(hidden_div, hide_slider, contents, filename, col_name_p_value, col_name_logFC, separ, input_value):
+    def update_interactivity_table(hidden_div, hide_slider, threshold_logFC, threshold_P, contents, filename, col_name_p_value, col_name_logFC, separ, input_value, num_columns_option):
         """
         Function for updating interactivity table, which is used for filtering and selecting table.
         It's updated after clicking submit-button, it submit upload data, selected column for p-value and logFC, annotation
@@ -1223,19 +1239,36 @@ def define_callbacks():
             if contents:
                 df_no_nan_local = upload_data.get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_value)
                 filter_action = "native"
+
+                df_no_nan_local['Significance'] = find_category(df_no_nan_local, col_name_p_value, col_name_logFC,
+                                                                threshold_logFC, threshold_P)
+
+                dict_type_format = formatter.table_formatting(df_no_nan_local, num_columns_option)
+
+                style_data_conditional =[{
+                        'if': {
+                            'column_type': 'text'
+                        },
+                        'textAlign': 'left',
+                        'padding-left': '5px'
+                }]
+
+
             else:
                 df_no_nan_local = pd.DataFrame()
                 filter_action = "none"
+                style_data_conditional = []
+                dict_type_format = {}
         else:
             df_no_nan_local = pd.DataFrame()
             filter_action = "none"
+            style_data_conditional = []
+            dict_type_format = {}
+
+        table_columns = [{"name": i, "id": i, "hideable": 'first', **dict_type_format[i]} for i in df_no_nan_local.columns]
+        return [df_no_nan_local.to_dict('records'), table_columns, filter_action, style_data_conditional]
 
 
-        # table_columns = [{"name": i, "id": i, "hideable": 'first', 'type': 'numeric', 'format' : Format(precision = 4)} for i in df_no_nan_local.columns]
-        table_columns = [{"name": i, "id": i, "hideable": 'first', 'type': 'text'} for i in df_no_nan_local.columns]
-
-
-        return [df_no_nan_local.to_dict('records'), table_columns, filter_action]
 
 
     @app.callback(
@@ -1311,12 +1344,15 @@ def define_callbacks():
         [
             dash.dependencies.Output('selected-data-table', 'data'),
             dash.dependencies.Output('selected-data-table', 'columns'),
-            dash.dependencies.Output('selected-data-table', 'filter_action')
+            dash.dependencies.Output('selected-data-table', 'filter_action'),
+            dash.dependencies.Output('selected-data-table', 'style_data_conditional')
         ],
         [
             dash.dependencies.Input('hidden-div', 'children'),
             dash.dependencies.Input('my-dashbio-volcanoplot', 'selectedData'),
             dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('volcanoplot-input', 'value'),
+            dash.dependencies.Input('volcanoplot-input_p', 'value'),
         ],
         [
             dash.dependencies.State('upload-data', 'contents'),
@@ -1324,11 +1360,12 @@ def define_callbacks():
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
             dash.dependencies.State('logFC-dataset-dropdown', 'value'),
             dash.dependencies.State('separator-dropdown', 'value'),
-            dash.dependencies.State('input_zero_value_replace', 'value')
+            dash.dependencies.State('input_zero_value_replace', 'value'),
+            dash.dependencies.State('numeric_columns', 'value')
         ]
     )
-    def update_select_data_table(hidden_div, selectedData, hide_slider, contents, filename, col_name_p_value, col_name_logFC, separ,
-                                 input_value):
+    def update_select_data_table(hidden_div, selectedData, hide_slider, threshold_logFC, threshold_P, contents, filename, col_name_p_value, col_name_logFC, separ,
+                                 input_value, num_columns_option):
         """
         Function for updating selected data table where written the data from lasso or box select in the graph
         It's updated after clicking submit-button (it submit upload data,selected separator and selected column for p-value and logFC, annotation
@@ -1353,6 +1390,16 @@ def define_callbacks():
                 df_no_nan_local = upload_data.get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_value)
                 filter_action = "native"
 
+                df_no_nan_local['Significance'] = find_category(df_no_nan_local, col_name_p_value, col_name_logFC, threshold_logFC, threshold_P)
+
+                dict_type_format = formatter.table_formatting(df_no_nan_local, num_columns_option)
+                style_data_conditional = [{
+                    'if': {
+                        'column_type': 'text'
+                    },
+                    'textAlign': 'left',
+                    'padding-left': '5px'
+                }]
 
                 index_list = []
                 selected_table = pd.DataFrame(columns=[i for i in df_no_nan_local.columns])
@@ -1374,22 +1421,51 @@ def define_callbacks():
                                 selected_table_local, df_no_nan_local, selectedData, col_name_logFC, i, index_list)
                 else:
                     selected_table_local = pd.DataFrame(columns=[i for i in df_no_nan_local.columns])
-
-                table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
-
-                return [selected_table_local.to_dict('records'), table_columns, filter_action]
+                table_columns = [{"name": i, "id": i, "hideable": 'first', **dict_type_format[i]} for i in
+                                 df_no_nan_local.columns]
+                return [selected_table_local.to_dict('records'), table_columns, filter_action, style_data_conditional]
 
             else:
                 df_no_nan_local = pd.DataFrame()
                 filter_action = "none"
-
-                table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
-                return [df_no_nan_local.to_dict('records'), table_columns, filter_action]
+                style_data_conditional = []
+                dict_type_format = {}
+                table_columns = [{"name": i, "id": i, "hideable": 'first', **dict_type_format[i]} for i in
+                                 df_no_nan_local.columns]
+                return [df_no_nan_local.to_dict('records'), table_columns, filter_action, style_data_conditional]
         else:
             df_no_nan_local = pd.DataFrame()
             filter_action = "none"
-            table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
-            return [df_no_nan_local.to_dict('records'), table_columns, filter_action]
+            style_data_conditional = []
+            dict_type_format = {}
+
+            table_columns = [{"name": i, "id": i, "hideable": 'first', **dict_type_format[i]} for i in
+                             df_no_nan_local.columns]
+            return [df_no_nan_local.to_dict('records'), table_columns, filter_action, style_data_conditional]
+
+
+
+    def find_category(df, col_name_p_value, col_name_logFC, threshold_logFC, threshold_P):
+        category_list =[]
+        threshold_P_log10 = -np.log10(threshold_P)
+
+        for index, row in df.iterrows():
+
+            if row[col_name_logFC] < threshold_logFC[1] and row[col_name_logFC] > threshold_logFC[0] and -np.log10(
+                    row[col_name_p_value]) > threshold_P_log10:
+                category_list.append('Significant')
+
+            elif row[col_name_logFC] > threshold_logFC[1] and -np.log10(row[col_name_p_value]) > threshold_P_log10:
+                category_list.append('Up&Sign')
+
+            elif row[col_name_logFC] < threshold_logFC[0] and -np.log10(row[col_name_p_value]) > threshold_P_log10:
+                category_list.append('Down&Sign')
+
+            else:
+                category_list.append('NotSign')
+
+        return category_list
+
 
 
     @app.callback(

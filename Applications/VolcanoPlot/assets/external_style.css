@@ -7,14 +7,14 @@
 }
 
 .form{
-    width: 320px;
-    height: 650px;
+    width: 386px;
+    min-height: 730px;
     margin-right: 10px;
     margin-bottom: 10px;
 }
 
 .graph{
-    width: calc(100% - 340px);
+    width: calc(100% - 410px);
     min-width: 550px;
     margin-left: 10px;
     flex-grow: 1;
@@ -139,3 +139,6 @@
     margin-right: 5px;
 }
 
+.current-page{
+    width: 35px;
+}
