@@ -29,6 +29,7 @@
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-between;
+    /* width: 386; */
 }
 
 .control-tab {
@@ -137,6 +138,10 @@
 #reset_filtering{
     display: inline-block;
     margin-right: 5px;
+}
+
+#vp-tabs-parent{
+    width: 386px;
 }
 
 .current-page{

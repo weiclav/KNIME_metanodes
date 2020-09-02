@@ -204,7 +204,59 @@ def create_layout(encoded_data, file_name):
                         ]
                         )
                     ),
-                    #
+                    dcc.Tab(
+                        className='tab',
+                        label='Set topN hits',
+                        children=html.Div(
+                              className='control-tab',
+                              children=[
+                                  'Use thresholds to annotate topN',
+                                  dcc.Dropdown(
+                                      id='thresholds-topN',
+                                      options=[
+                                          {'label': 'All (ignores thresholds)', 'value': 'all'},
+                                          {'label': 'Changed (and significant)', 'value': 'changed'},
+                                          {'label': 'Increased (and significant)', 'value': 'increased'},
+                                          {'label': 'Decreased (and significant)', 'value': 'decreased'},
+                                      ],
+                                      value='all'
+
+                                               ),
+                                  html.Br(),
+                                  'Criterion for ranking hits',
+                                  dcc.Dropdown(
+                                      id='criterion-topN',
+                                      options=[
+                                          {'label': 'Manhattan distance', 'value': 'manhattan'},
+                                          {'label': 'Euclidean distance', 'value': 'euclid'},
+                                          {'label': 'Fold change', 'value': 'fc'},
+                                          {'label': 'Significance', 'value': 'sign'}
+                                      ],
+                                      value='manhattan'
+
+                                  ),
+                                  html.Br(),
+                                  'Number of top hits',
+                                  html.Form(children=[dcc.Input(
+                                      id="input-number-topn", type="number", placeholder="10",
+                                      min=0,
+                                      max=10,
+                                      step=1,
+                                      value=10
+                                  )],
+                                      # noValidate='novalidate',
+                                      action="javascript:void(0);"),
+
+                                  html.Br(),
+                                  'Select annotations column(s)',
+                                  dcc.Dropdown(
+                                      id='annotations-topN',
+
+                                  ),
+                                        ]
+                              )
+
+                    )
                 ]
                 ),]),
 
@@ -579,7 +631,9 @@ def define_callbacks():
          dash.dependencies.Output('logFC-dataset-dropdown', 'value'),
          dash.dependencies.Output('P-value-dataset-dropdown', 'value'),
          dash.dependencies.Output('annotations_input', 'value'),
-         dash.dependencies.Output('numeric_columns', 'value')
+         dash.dependencies.Output('numeric_columns', 'value'),
+         dash.dependencies.Output('annotations-topN', 'value'),
+         dash.dependencies.Output('input-number-topn', 'value')
          ],
         [dash.dependencies.Input('upload-data', 'contents')],
         [
@@ -588,11 +642,14 @@ def define_callbacks():
             dash.dependencies.State('logFC-dataset-dropdown', 'value'),
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
             dash.dependencies.State('annotations_input', 'value'),
-            dash.dependencies.State('numeric_columns', 'value')
+            dash.dependencies.State('numeric_columns', 'value'),
+            dash.dependencies.State('annotations-topN', 'value'),
+            dash.dependencies.State('input-number-topn', 'value')
+
         ]
 
     )
-    def update_new_data(contents, selectedData,  filter_button, value_log_fc, value_p, value_annot, value_num_columns):
+    def update_new_data(contents, selectedData,  filter_button, value_log_fc, value_p, value_annot, value_num_columns, annotations_topN, num_input_topN):
         """
         Function, which save in global vatiable new_data, that new data are uploaded and reset values of dropdowns in the form
         :param contents: string - data encoded by base64, changed with new uploaded data
@@ -611,7 +668,9 @@ def define_callbacks():
         value_p = None
         value_annot = []
         value_num_columns = []
-        return [selectedData, filter_button, value_log_fc, value_p, value_annot, value_num_columns]
+        annotations_topN = []
+        num_input_topN = 10
+        return [selectedData, filter_button, value_log_fc, value_p, value_annot, value_num_columns, annotations_topN, num_input_topN]
 
 
     @app.callback(
@@ -747,13 +806,14 @@ def define_callbacks():
         return [options, value]
 
 
-
     @app.callback(
         [
             dash.dependencies.Output('logFC-dataset-dropdown', 'options'),
             dash.dependencies.Output('P-value-dataset-dropdown', 'options'),
             dash.dependencies.Output('annotations_input', 'options'),
-            dash.dependencies.Output('numeric_columns', 'options')
+            dash.dependencies.Output('numeric_columns', 'options'),
+            dash.dependencies.Output('annotations-topN', 'options'),
+
         ],
         [
             dash.dependencies.Input('hide-slider', "value"),
@@ -794,7 +854,8 @@ def define_callbacks():
                 }
                 for dset in df_no_nan_local.columns
             ]
-        return [option, option, option, option]
+        return [option, option, option, option, option]
+
 
     def enable_submit_button():
         """
@@ -810,6 +871,28 @@ def define_callbacks():
             }
 
         return [disable_button, title, style]
+
+    @app.callback(
+        [
+            dash.dependencies.Output('input-number-topn', 'max')
+        ],
+        [
+            dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('separator-dropdown', 'value'),
+        ],
+        [
+
+            dash.dependencies.State('upload-data', 'contents'),
+            dash.dependencies.State('upload-data', 'filename'),
+        ]
+    )
+    def update_input_topn(hide_slider, separ, contents, filename):
+        if contents:
+            contents = contents[0]
+            filename = filename[0]
+            df = upload_data.parse_contents(contents, filename, separ)
+            max_num_topn = len(df.index)
+        return [max_num_topn]
 
 
     @app.callback(
@@ -1541,12 +1624,16 @@ def define_callbacks():
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
             dash.dependencies.State('annotations_input', 'value'),
             dash.dependencies.State('separator-dropdown', 'value'),
-            dash.dependencies.State('input_zero_value_replace', 'value')
+            dash.dependencies.State('input_zero_value_replace', 'value'),
+            dash.dependencies.State('thresholds-topN', 'value'),
+            dash.dependencies.State('criterion-topN', 'value'),
+            dash.dependencies.State('input-number-topn', 'value'),
+            dash.dependencies.State('annotations-topN', 'value'),
         ]
 
     )
     def update_graph(hidden_div, rows, indices, derived_virtual_selected_rows, effects_p, effects, hide_slider, colorblind, point_size, contents, filename,
-                     col_name_logFC, col_name_p_value, annotations, separ, input_value):
+                     col_name_logFC, col_name_p_value, annotations, separ, input_value, threshold_topN, criterion_topN, input_num_topN, annotations_topN):
         """
         Function for update graph.
         It's updated with change of inputs.
@@ -1612,6 +1699,7 @@ def define_callbacks():
 
                 y_label_t = "-log10(" + col_name_p_value + ")"
                 [annotations_str, dff] = annotation.call_update_annotation(annotations, dff)
+                [topN_x, topN_y, topN_annotation_text] = annotation.find_topN(annotations_topN, dff, threshold_topN, criterion_topN, input_num_topN, col_name_logFC, 'logP', effects)
 
                 fig = dashbio.VolcanoPlot(
                     p=col_name_p_value,
@@ -1633,25 +1721,48 @@ def define_callbacks():
                     gene=None
                 )
 
-                for i in range(len(arrow_x)):
-                    fig.add_annotation(
-                        x=arrow_x[i],
-                        y=arrow_y[i],
-                    )
+                if arrow_x:
+                    for i in range(len(arrow_x)):
+                        fig.add_annotation(
+                            x=arrow_x[i],
+                            y=arrow_y[i],
+                        )
 
-                fig.update_annotations(dict(
-                    xref="x",
-                    yref="y",
-                    arrowsize=1,
-                    arrowwidth=2,
-                    showarrow=True,
-                    arrowhead=2, #shape of arrowhead
-                    startarrowsize=5,
-                    ax=20,
-                    ay=-30,
-                    opacity=1,
-                    arrowcolor='#000000'
-                ))
+                    fig.update_annotations(dict(
+                        xref="x",
+                        yref="y",
+                        arrowsize=1,
+                        arrowwidth=2,
+                        showarrow=True,
+                        arrowhead=2, #shape of arrowhead
+                        startarrowsize=5,
+                        ax=20,
+                        ay=-30,
+                        opacity=1,
+                        arrowcolor='#000000'
+                    ))
+
+                if topN_x:
+                    for i in range(len(topN_x)):
+                        fig.add_annotation(
+                            x=topN_x[i],
+                            y=topN_y[i],
+                            text=topN_annotation_text[i]
+                        )
+
+                    fig.update_annotations(dict(
+                        xref="x",
+                        yref="y",
+                        arrowsize=1,
+                        arrowwidth=2,
+                        showarrow=True,
+                        arrowhead=2, #shape of arrowhead
+                        startarrowsize=5,
+                        ax=20,
+                        ay=-30,
+                        opacity=1,
+                        arrowcolor='#000000',
+                    ))
 
                 fig.update_layout(plot_bgcolor='#ffffff')
                 fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#dbdbdb')

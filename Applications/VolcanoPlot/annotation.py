@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 def update_annotations(row, columns):
     """
     Function make new column (in the row), where are fused info from selected columns from the row.
@@ -53,3 +54,47 @@ def call_update_annotation(annotations, df_no_nan_local):
         df_no_nan_local = df_no_nan_local.apply(update_annotations, axis=1, columns=annotations)
         annotations_str = 'onhover'
     return [annotations_str, df_no_nan_local]
+
+def find_topN(annotations, df, threshold_topN, criterion_topN, input_num_topN, col_name_logFC, col_name_p_value, threshold_logFC):
+    list_axis_x_topN = []
+    list_axis_y_topN = []
+    list_annot_text = []
+    df_filtered = pd.DataFrame()
+    if input_num_topN > 0 and annotations:
+        if threshold_topN == 'decreased':
+            df_filtered = df[df[col_name_logFC] < threshold_logFC[0]]
+        elif threshold_topN == 'changed':
+            df_filtered = df[df[col_name_logFC] < threshold_logFC[0]]
+            df_filtered = df_filtered.append(df[df[col_name_logFC]>threshold_logFC[1]])
+        elif threshold_topN == 'increased':
+            df_filtered = df[df[col_name_logFC]>threshold_logFC[1]]
+        else:
+            df_filtered = df
+
+        if criterion_topN and not df_filtered.empty:
+            if criterion_topN == 'manhattan':
+                df_filtered = df_filtered.apply(manhattan, axis=1, columns=[col_name_logFC, col_name_p_value])
+                column = 'manhattan'
+            elif criterion_topN == 'euclid':
+                df_filtered = df_filtered.apply(euclidian, axis=1, columns=[col_name_logFC, col_name_p_value])
+                column = 'euclid'
+            elif criterion_topN == 'fc':
+                column = [col_name_logFC, col_name_p_value]
+            else:
+                column = [col_name_p_value, col_name_logFC]
+
+            df_sorted = df_filtered.sort_values(by=column, ascending=False).reset_index(drop=True)
+            list_axis_x_topN = df_sorted.loc[0:input_num_topN, col_name_logFC].tolist()
+            list_axis_y_topN = df_sorted.loc[0:input_num_topN, col_name_p_value].tolist()
+            list_annot_text = df_sorted.loc[0:input_num_topN, annotations].tolist()
+
+
+    return [list_axis_x_topN, list_axis_y_topN, list_annot_text]
+
+def manhattan(row, columns):
+    row['manhattan'] = abs(0 - row[columns[0]]) + abs(0 - row[columns[1]])
+    return row
+
+def euclidian(row, columns):
+    row['euclid'] = np.sqrt((0 - row[columns[0]])**2 + (0 - row[columns[1]])**2)
+    return row
