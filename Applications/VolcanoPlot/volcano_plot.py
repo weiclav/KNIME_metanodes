@@ -658,6 +658,9 @@ def define_callbacks():
         :param value_log_fc: string - value of dropdown for logFC
         :param value_p: string - value of dropdown for p-value
         :param value_annot: string - value of dropdown for annotations
+        :param value_num_columns: list - dropdown's value set by user which define numeric columns
+        :param annotations_topN: string - chosed column for annotation topn proteins
+        :param num_input_topN: number - chosed number of topn annotated proteins
         :return: list of reseted parameters
         """
 
@@ -831,7 +834,7 @@ def define_callbacks():
         :param contents(string): get from upload data - data for reading csv - used in function read_csv.parse_contents
         :param filename(string): get from upload data - used in function read_csv.parse_contents
         :param separ(list of string): get from separator-dropdown - actual choose of separator, default is automatic
-        :return: option for all 3 dropdown (names of columns in the updated table)
+        :return: option for all 5 dropdowns (values are names of columns in the updated table)
         """
         if contents:
             contents = contents[0]
@@ -887,6 +890,15 @@ def define_callbacks():
         ]
     )
     def update_input_topn(hide_slider, separ, contents, filename):
+        """
+        Function set max number of possible topn annotations
+
+        :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
+        :param separ: list - get from separator-dropdown - actual choose of separator, default is automatic
+        :param contents: string - get from upload data - data for reading csv - used in function upload_data.parse_contents
+        :param filename: string - get from upload data - used in function read_csv.parse_contents
+        :return: list - value of max of topn annotations
+        """
         if contents:
             contents = contents[0]
             filename = filename[0]
@@ -1182,7 +1194,7 @@ def define_callbacks():
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
         :param logFC_input_value: number - logFC inputed by dcc.Input, it is changing setting of logFC's slider
         :param contents: (string)  get from upload data - data for reading csv - used in function upload_data.parse_contents
-        :param filename(string): get from upload data - used in function read_csv.parse_contents
+        :param filename (string): get from upload data - used in function read_csv.parse_contents
         :param col_name_p_value:  (list of string) get from P-value-dataset-dropdown - used in function upload_data.parse_contents
         :param col_name_logFC: (list of string) get from logFC-dataset-dropdown - used in function upload_data.parse_contents
         :param separ(list of string): get from separator-dropdown - actual choose of separator, default is automatic
@@ -1308,12 +1320,15 @@ def define_callbacks():
 
         :param hidden_div: children of hidden_div; it's changed after uploading new data and reseting all components
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
+        :param threshold_logFC: list - two numbers - values of thresholds for logFC
+        :param threshold_P: number - threshold value for p-value
         :param contents: (string)  get from upload data - data for reading csv - used in function upload_data.parse_contents
         :param filename (string): get from upload data - used in function upload_data.parse_contents
         :param col_name_p_value: (list of string) get from P-value-dataset-dropdown - used in function upload_data.parse_contents
         :param col_name_logFC (list of string): get from logFC-dataset-dropdown - used in function upload_data.parse_contents
         :param separ (list of string): get from separator-dropdown - actual choose of separator, default is automatic - used in function upload_data.parse_contents
         :param input_value: number - inputed number in the form for replacing zeros p-values in the dataset
+        :param num_columns_option: list - dropdowm's value from form, columns specified as numeric by user
         :return: interactive table with actual data from uploaded data, table columns from uploaded table for interactive table, type of filter action
         """
         global old_data
@@ -1379,7 +1394,7 @@ def define_callbacks():
 
         :param hidden_div: children of hidden_div; it's changed after uploading new data and reseting all components
         :param threshold_logFC: (list of numbers) get from rangeslider volcanoplot-input - used for summation proteins in categories
-        :param threshold_P_log10 (number): get from slider volcanoplot-input_p -  used for summation proteins in categories
+        :param threshold_P (number): get from slider volcanoplot-input_p -  used for summation proteins in categories
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
         :param contents (string): get from upload data - data for reading csv - used in function upload_data.parse_contents
         :param filename (string): get from upload data - used in function upload_data.parse_contents
@@ -1458,12 +1473,15 @@ def define_callbacks():
         :param hidden_div: children of hidden_div; it's changed after uploading new data and reseting all components
         :param selectedData (dict of lists): get from selected-data-table (property selectedData) - info from lasso/box select
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
+        :param threshold_logFC: list - two numbers - thresholds for logFC
+        :param threshold_P: number - threshold for p-value
         :param contents (string): get from upload data - data for reading csv - used in function upload_data.parse_contents
         :param filename (string): get from upload data - used in function upload_data.parse_contents
         :param col_name_p_value (list of string): get from P-value-dataset-dropdown - used in function upload_data.parse_contents
         :param col_name_logFC (list of string): get from logFC-dataset-dropdown - used in function upload_data.parse_contents
         :param separ (list of string): get from separator-dropdown - actual choose of separator, default is automatic - used in function upload_data.parse_contents
         :param input_value: number - inputed number in the form for replacing zeros p-values in the dataset
+        :param num_columns_option: list - dropdowm's value from form, columns specified as numeric by user
         :return: (list of string) datable containing rows of proteins which was selected by lasso/box selection
         """
         global old_data
@@ -1529,6 +1547,16 @@ def define_callbacks():
 
 
     def find_category(df, col_name_p_value, col_name_logFC, threshold_logFC, threshold_P):
+        """
+        Function define new column to datatables. Column contain info in which category proteins are. Category is defined
+        by p-value, log fold change and thresholds for p-value and logFC of protein
+        :param df: dataframe - data
+        :param col_name_p_value: string - name of column with p-values
+        :param col_name_logFC: string - name of column with logFC
+        :param threshold_logFC: list - contain two numebers - thresholds for logFC
+        :param threshold_P: number - threshold for p value
+        :return category_list: list (new column) containing defined categories for each protein (row)
+        """
         category_list =[]
         threshold_P_log10 = -np.log10(threshold_P)
 
@@ -1560,6 +1588,17 @@ def define_callbacks():
         ]
     )
     def download_interactive_graph_and_delete_old_files(download_graph, graph_figure, location):
+        """
+        Function download html of interactive graph to server and delete old files and create link for users to download
+        graph.
+
+        Save html file to folder '.download' in folder where app is running.
+
+        :param download_graph: number - mnumber of clicks to button to download graph, when it's clicked this function is called
+        :param graph_figure: figure - graph which is  saved as html file
+        :param location: string - link to download graph by user
+        :return: location
+        """
         filename = uuid.uuid4().hex
 
         if not os.path.exists(UPLOAD_DIRECTORY):
@@ -1596,6 +1635,13 @@ def define_callbacks():
         ]
         )
     def open_browser(location, url, title):
+        """
+        Function open browser when new link to download is created. Link is created when button for downloading graph is clicked
+        :param location: string - link (location) to downloading graph choosed by user
+        :param url: string - url for downloading graph
+        :param title: string - used as variable for to be something on output
+        :return: title
+        """
         if location:
             path = url+location
             webbrowser.open(path)
@@ -1639,8 +1685,9 @@ def define_callbacks():
         It's updated with change of inputs.
          -> It's updated after clicking submit-button (it submit upload data,selected separator and selected column for p-value and logFC, annotation
             from uploaded table)
-         -> It's updated with selecting rows in the interactivity table or with derived_virtual_data (I have to control how it works)
+         -> It's updated with selecting rows in the interactivity table or with derived_virtual_data
          ->It's updated after changing slider input for p value or logFC
+
 
          Function cooperate with interactivity table due to derived_virtual_data and derived_virtual_selected_rows.
 
@@ -1652,6 +1699,8 @@ def define_callbacks():
         :param effects_p (number): get from slider volcanoplot-input_p -  used for specification of volcanoplot property
         :param effects: (list of number) get from rangeslider volcanoplot-input - used for specification od volcanoplot property
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
+        :param colorblind: string - value of checked box
+        :param point_size: number - set size of points in graph
         :param contents (string): get from upload data - data for reading csv - used in function upload_data.parse_contents
         :param filename (string): get from upload data - used in function read_csv.parse_contents
         :param col_name_p_value: (list of string) get from P-value-dataset-dropdown - used in function upload_data.parse_contents
@@ -1659,6 +1708,10 @@ def define_callbacks():
         :param annotations (string): get from multi choose dropdown annotations-input, it's used for text 'on  hover' - there are function annotation.call_update_annotation
         :param separ (list of string): get from separator-dropdown - actual choose of separator, default is automatic - used in function upload_data.parse_contents
         :param input_value: number - inputed number in the form for replacing zeros p-values in the dataset
+        :param threshold_topN: string - selected value in dropdown in the form - selection of threshold to find topN
+        :param criterion_topN: string - elected value in dropdown in the form - criterion to find topN
+        :param input_num_topN: number - number of topN hits
+        :param annotations_topN: string - name of column from data used to annotate topN proteins
         :return: (figure) it returns volcano plot
         """
         effects_p = -np.log10(effects_p)

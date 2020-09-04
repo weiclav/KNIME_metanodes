@@ -3,6 +3,19 @@ import numpy as np
 
 def set_color(dff, derived_virtual_selected_rows, col_name_logFC, col_name_p_value, effects, effects_p, colorblind):
 
+    """
+    Function define colors for all points in the graph.
+
+    :param dff: dataframe - data
+    :param derived_virtual_selected_rows: derived_virtual_selected_rows (list of numbers): derived_virtual_selected_rows represents the indices of the selected_rows from the perspective of the derived_virtual_indices
+            (derived_virtual_indices indicates the order in which the original rows appear after being filtered and sorted)
+    :param col_name_logFC: string - name of column with logFC
+    :param col_name_p_value: string - name of column with p-value
+    :param effects: (list of number) get from rangeslider volcanoplot-input - used for specification od volcanoplot property
+    :param effects_p:  get from slider volcanoplot-input_p -  used for specification of volcanoplot property
+    :param colorblind: string - value from checkbox, define if should be used colorblind scheme
+    :return: list - colors
+    """
     significant_color = 'rgba(255,221,0, 0.8)'
     sign_up_color = 'rgba(255,0,0, 0.8)'
     sign_down_color = 'rgba(0,255,0, 0.8)'

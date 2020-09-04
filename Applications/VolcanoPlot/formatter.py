@@ -1,8 +1,14 @@
 import pandas as pd
-import dash
-import dash_table
+
 
 def table_formatting(df_no_nan_local, num_columns_option):
+    """
+    Function define type of columns and specify format for numbers.
+
+    :param df_no_nan_local: dataframe - data
+    :param num_columns_option: string - name of columns specified by user in the form's dropdown
+    :return: dictionary with specified type and format for all columns in data
+    """
     dict_type_format = {}
 
     if num_columns_option:

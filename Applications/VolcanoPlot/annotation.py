@@ -42,11 +42,9 @@ def call_update_annotation(annotations, df_no_nan_local):
 
     """
     Function control if annotation is empty or not. Use annotation for selecting rows for fusing in the new column onhover
-    :param indices:
     :param annotations: (list), choosed columns in the dropdown
     :param df_no_nan_local: (dataframe), copy of global df_no_nan
-    :param dff: new dataframe with added column "onhover"
-    :return: (string) - name of column, where are annotations, (dataframe) - new dataframe with added column "onhover" 
+    :return: (string) - name of column, where are annotations, (dataframe) - new dataframe with added column "onhover"
     """
     if not annotations:
         annotations_str = None
@@ -56,6 +54,18 @@ def call_update_annotation(annotations, df_no_nan_local):
     return [annotations_str, df_no_nan_local]
 
 def find_topN(annotations, df, threshold_topN, criterion_topN, input_num_topN, col_name_logFC, col_name_p_value, threshold_logFC):
+    """
+    Function find out topN proteins and return list of lists with their x and y axis and annotations.
+    :param annotations: string - name of column, which values are used to annotate topN proteins
+    :param df: dataframe
+    :param threshold_topN: string - value used to specify type of threshold to find out topN proteins
+    :param criterion_topN: string - value used to specify type of distance metric to find out topN proteins
+    :param input_num_topN: number - number of topN proteins
+    :param col_name_logFC: string - name of column with values for logFC, graph's x axis
+    :param col_name_p_value: string - name of column with values for p-value, graph's y axis
+    :param threshold_logFC: list - two numbers, threshold for logFC
+    :return: list of lists - x and y axis of topN proteins and it's annotations
+    """
     list_axis_x_topN = []
     list_axis_y_topN = []
     list_annot_text = []
@@ -92,9 +102,21 @@ def find_topN(annotations, df, threshold_topN, criterion_topN, input_num_topN, c
     return [list_axis_x_topN, list_axis_y_topN, list_annot_text]
 
 def manhattan(row, columns):
+    """
+    Function finds out manhattan distance for proteins from x=0 and y=0
+    :param row: series - row of protein
+    :param columns: list of strings - name of columns for x and y axis in the graph
+    :return: row - series with added column with distance
+    """
     row['manhattan'] = abs(0 - row[columns[0]]) + abs(0 - row[columns[1]])
     return row
 
 def euclidian(row, columns):
+    """
+    Function finds ou euclidian distance for proteins from x=0 and y=0
+    :param row: series - row of protein
+    :param columns:  list of strings - name of columns for x and y axis in the graph
+    :return: row - series with added one column with distance
+    """
     row['euclid'] = np.sqrt((0 - row[columns[0]])**2 + (0 - row[columns[1]])**2)
     return row
