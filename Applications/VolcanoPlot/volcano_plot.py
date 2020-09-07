@@ -916,7 +916,7 @@ def define_callbacks():
             dash.dependencies.Output('submit-button', 'style')
         ],
         [
-            dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('hide-slider', 'value'),
             dash.dependencies.Input('logFC-dataset-dropdown', 'value'),
             dash.dependencies.Input('P-value-dataset-dropdown', 'value'),
             dash.dependencies.Input('input_zero_value_replace', 'value'),
@@ -977,28 +977,33 @@ def define_callbacks():
     Column for p-value is missing
     '''
                     if isinstance(df[col_name_logFC][0], str) or np.isnan(df[col_name_logFC][0]):
+                        str_show_logFC= ''
+                        str_show_logFC = df.loc[0:2, col_name_logFC].to_string(index=None)
                         df[col_name_logFC] = pd.to_numeric(df[col_name_logFC], errors='coerce')
                         df_no_nan = df.dropna(subset=[col_name_logFC])
                         df_no_nan = df_no_nan.reset_index(drop=True)
                         if df_no_nan.empty:
                             button = enable_submit_button()
                             children += '''
-    Selected column for log fold change should contain numbers
-    '''
+    There are no numbers in the selected log fold change column, please inspect, (provided: *{}*)
+    '''.format(str_show_logFC)
                 elif col_name_logFC is None:
                     button = enable_submit_button()
                     children += '''
     Column for log fold change is missing
     '''
                     if isinstance(df[col_name_p_value][0], str) or np.isnan(df[col_name_p_value][0]):
+                        str_show_pval = ''
+                        str_show_pval = df.loc[0:2, col_name_p_value].to_string(index=None)
                         df[col_name_p_value] = pd.to_numeric(df[col_name_p_value], errors='coerce')
                         df_no_nan = df.dropna(subset=[col_name_p_value])
                         df_no_nan = df_no_nan.reset_index(drop=True)
                         if df_no_nan.empty:
                             button = enable_submit_button()
                             children += '''
-    Selected column for p-value should contain numbers
-    '''
+    There are no numbers in the selected p-value column, please inspect, (provided: *{}*)
+    '''.format(str_show_pval)
+
                         elif not (df_no_nan[col_name_p_value] >= 0).all(axis=None):
                             button = enable_submit_button()
                             children += '''
@@ -1017,23 +1022,27 @@ def define_callbacks():
     '''
                     if(isinstance(df[col_name_logFC][0], str) or isinstance(df[col_name_p_value][0], str) or np.isnan(df[col_name_p_value][0]) or np.isnan(df[col_name_logFC][0])):
                         if isinstance(df[col_name_logFC][0], str) or np.isnan(df[col_name_logFC][0]): #or vsechno nan?
+                            str_show_logFC = ''
+                            str_show_logFC = df.loc[0:2, col_name_logFC].to_string(index=None)
                             df[col_name_logFC] = pd.to_numeric(df[col_name_logFC], errors='coerce')
                             df_no_nan = df.dropna(subset=[col_name_logFC])
                             df_no_nan = df_no_nan.reset_index(drop=True)
                             if df_no_nan.empty:
                                 button = enable_submit_button()
                                 children += '''
-    Selected column for log fold change should contain numbers                            
-    '''
+    There are no numbers in the selected log fold change column, please inspect (provided: *{}*)
+    '''.format(str_show_logFC)
                         if isinstance(df[col_name_p_value][0], str) or  np.isnan(df[col_name_p_value][0]): #or nan?
+                            str_show_pval = ''
+                            str_show_pval = df.loc[0:2, col_name_p_value].to_string(index=None)
                             df[col_name_p_value] = pd.to_numeric(df[col_name_p_value], errors='coerce')
                             df_no_nan = df.dropna(subset=[col_name_p_value])
                             df_no_nan = df_no_nan.reset_index(drop=True)
                             if df_no_nan.empty:
                                 button = enable_submit_button()
                                 children += '''
-    Selected column for p-value should contain numbers                            
-    '''
+    There are no numbers in the selected p-value column, please inspect, (provided: *{}*)
+    '''.format(str_show_pval)
                             elif not (df_no_nan[col_name_p_value] >= 0).all(axis=None):
                                 button = enable_submit_button()
                                 children += '''
