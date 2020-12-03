@@ -4,7 +4,9 @@
 # In[9]:
 import base64
 import io
-
+import os
+import time
+import sys
 import pandas as pd
 
 import dash
@@ -18,12 +20,17 @@ import csv
 import base64
 import mimetypes
 import argparse
-from dash_table.Format import Format
+from flask import Flask, send_from_directory
+from urllib.parse import quote as urlquote
 import plotly.graph_objects as go
+import uuid
+import webbrowser
 
 import annotation
 import upload_data
 import select_data_table_match
+import set_colors
+import formatter
 
 parser = argparse.ArgumentParser(description='Set path for data.')
 parser.add_argument('-f', '--file_input', type=str,
@@ -32,7 +39,24 @@ parser.add_argument('-f', '--file_input', type=str,
 
 # initialization of app + import css
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+# app = dash.Dash(__name__)
+
+########################################################################################################################
+server = Flask(__name__)
+app = dash.Dash(server=server)
+UPLOAD_DIRECTORY = os.getcwd()
+if not os.path.exists(UPLOAD_DIRECTORY):
+    os.makedirs(UPLOAD_DIRECTORY)
+
+@server.route("/download/<path:filename>")
+def download(filename):
+    """Serve a file from the upload directory."""
+    return send_from_directory(UPLOAD_DIRECTORY, filename, as_attachment=True, cache_timeout=180)
+
+########################################################################################################################
+
+
+# app = dash.Dash(__name__)
 
 # definition of category table
 category_significant = 'Significant'
@@ -80,34 +104,19 @@ def create_layout(encoded_data, file_name):
     # https://dash.plot.ly/dash-core-components  - dash documentation for components
     # https://dash.plot.ly/datatable/reference - dash documentation for interactivity table
     return html.Div(id='page-content', children=[
+        html.Div(className='form_graph', children=[
 
-        html.Div(style={
-                        'display': 'inline-block',
-                        'width': '25%',
-                        'height': '700px'
-                        }, children=[
+        html.Div(className='form',
+                 children=[
             html.Div(id='vp-control-tabs', className='control-tabs',
-                     style={
-                         'height': '100%',
-                         'borderWidth': '1px',
-                         'borderStyle': 'solid',
-                         'borderColor': '#bbbbbb',
-                         'margin-bottom': '2px',
-                         'display': 'flex',
-                         'flex-direction': 'column',
-                         'flex-wrap': 'wrap',
-                         'justify-content': 'space-between'
-
-
-                     }, children=[
+                     children=[
                 html.Div(children=[dcc.Tabs(id='vp-tabs', value='Upload_data', children=[
                     dcc.Tab(
+                        className='tab',
                         label='Upload data',
                         value="Upload_data",
-                        style={
-                            'z-index': '1',  # for more area to click
-                        },
-                        children=html.Div(className='control-tab', style={'margin': '10px'}, children=[
+                        children=html.Div(className='control-tab',
+                                          children=[
                             'Upload data *',
                             dcc.Upload(
                                 id='upload-data',
@@ -119,18 +128,6 @@ def create_layout(encoded_data, file_name):
                                 ]),
                                 contents=encoded_data,
                                 filename=file_name,
-                                style={
-                                    'width': '100%',
-                                    'borderWidth': '1px',
-                                    'borderStyle': 'solid',
-                                    'borderRadius': '5px',
-                                    'textAlign': 'center',
-                                    'color': '#555',
-                                    'borderColor': '#bbbbbb',
-                                    'z-index': '1',
-                                    'padding-top': '10px',
-                                    'padding-bottom': '10px'
-                                },
                                 # Allow multiple files to be uploaded
                                 multiple=True
                             ),
@@ -144,15 +141,15 @@ def create_layout(encoded_data, file_name):
                                     {'label': "Comma", 'value': ","}  # should I add semothing else?
                                 ],
                                 value=None,
-                                style={'textAlign': 'left'}
                             )
                         ],
                         )
                     ),
                     dcc.Tab(
+                        className='tab',
                         label='Column select',
-                        style={'z-index': '1'}, # for more area to click
-                        children=html.Div(className='control-tab', style={'margin': '10px'}, children=[
+                        children=html.Div(className='control-tab',
+                                          children=[
                                 'Select log fold change column *',
                                 dcc.Dropdown(
                                     id='logFC-dataset-dropdown'
@@ -172,6 +169,14 @@ def create_layout(encoded_data, file_name):
                                     id='annotations_input',
                                     multi=True,
                                 ),
+
+                                html.Br(),
+
+                                'Select numeric column(s)',
+                                dcc.Dropdown(
+                                    id='numeric_columns',
+                                    multi=True,
+                                ),
                                 html.Br(),
                                 dcc.Markdown(id='prevent-update-info', children=[''' '''])
 
@@ -179,12 +184,10 @@ def create_layout(encoded_data, file_name):
                         )
                     ),
                     dcc.Tab(
+                        className='tab',
                         label='Zero value replace',
-                        style={
-                            'z-index': '1',  # for more area to click
-
-                        },
-                        value='view', children=html.Div(className='control-tab', style={'margin': '10px'}, children=[
+                        value='view', children=html.Div(className='control-tab',
+                                                        children=[
                             "Specify value to replace zero p-value",
                             html.Br(),
                             html.Form(children=[dcc.Input(
@@ -192,7 +195,6 @@ def create_layout(encoded_data, file_name):
                                 min=1 * (10 ** (-6)),
                                 max=1,
                                 step=0.001,
-                                style={'width': '100%'}
                             )],
                                 # noValidate='novalidate',
                                 action="javascript:void(0);"),
@@ -201,29 +203,75 @@ def create_layout(encoded_data, file_name):
 
                         ]
                         )
+                    ),
+                    dcc.Tab(
+                        className='tab',
+                        label='Set topN hits',
+                        children=html.Div(
+                              className='control-tab',
+                              children=[
+                                  'Use thresholds to annotate topN',
+                                  dcc.Dropdown(
+                                      id='thresholds-topN',
+                                      options=[
+                                          {'label': 'All (ignores thresholds)', 'value': 'all'},
+                                          {'label': 'Changed (and significant)', 'value': 'changed'},
+                                          {'label': 'Increased (and significant)', 'value': 'increased'},
+                                          {'label': 'Decreased (and significant)', 'value': 'decreased'},
+                                      ],
+                                      value='all'
+
+                                               ),
+                                  html.Br(),
+                                  'Criterion for ranking hits',
+                                  dcc.Dropdown(
+                                      id='criterion-topN',
+                                      options=[
+                                          {'label': 'Manhattan distance', 'value': 'manhattan'},
+                                          {'label': 'Euclidean distance', 'value': 'euclid'},
+                                          {'label': 'Fold change', 'value': 'fc'},
+                                          {'label': 'Significance', 'value': 'sign'}
+                                      ],
+                                      value='manhattan'
+
+                                  ),
+                                  html.Br(),
+                                  'Number of top hits',
+                                  html.Form(children=[dcc.Input(
+                                      id="input-number-topn", type="number", placeholder="10",
+                                      min=0,
+                                      max=10,
+                                      step=1,
+                                      value=10
+                                  )],
+                                      # noValidate='novalidate',
+                                      action="javascript:void(0);"),
+
+                                  html.Br(),
+                                  'Select annotations column(s)',
+                                  dcc.Dropdown(
+                                      id='annotations-topN',
+
+                                  ),
+                                        ]
+                              )
+
                     )
                 ]
                 ),]),
 
                 # html.Br(),
-                html.Div(
-                 style={
-                    'display': 'flex',
-                    'flex-direction': 'row',
-                     'flex-wrap': 'wrap',
-                     'justify-content': 'space-between'
-                 },
+                html.Div(className='form-markdown_button',
                  children=[
-                     dcc.Markdown(children = ['\* Required'],
-                         style={
-                            'margin': '10px',
-                         }),
-                    html.Button(id='submit-button', n_clicks=0, children='Submit', disabled=True, title='Set required values in Upload data and Column select.',
-                                style={
-                                    'margin': '10px',
-                                    'border-color': '#b8b0b0',
-                                    'color': '#ccb6b6'
-                                    },
+                     dcc.Markdown(
+                         id='required-markdown',
+                         children=['\* Required'],
+                     ),
+                    html.Button(id='submit-button',
+                                n_clicks=0,
+                                children='Submit',
+                                disabled=True,
+                                title='Set required values in Upload data and Column select.',
                                 )
                          ]
 
@@ -233,15 +281,8 @@ def create_layout(encoded_data, file_name):
                 ],
                      )
         ]),
-        html.Div(style={
-                'margin': '10px',
-                'float': 'right',
-                'display': 'inline-block',
-                'width': '70%',
-                'height': '700px',
-                'padding-bottom': '40px'
-
-                }, children=[
+        html.Div(className='graph',
+                 children=[
       'Log fold-change threshold',
                # range slider for log fold change
                dcc.RangeSlider(
@@ -262,28 +303,20 @@ def create_layout(encoded_data, file_name):
                ),
                 html.Div(
                         children=[
-                            html.P(style={
-                               'display':'inline-block',
-                                'padding':'5px'
-                           },
+                            html.P(
+                                className='info',
                                 children=['Type a number to set the rangeslider values:  ']),
                             html.Form(
+                                className='form-inputer',
                                 children=[dcc.Input(
                                     id="value_logFC_slider_inputer", type="number", placeholder="1",
                                     value=1,
-                                    style={
-                                        'margin': '3px'
-                                    }
                                     )
 
                                 ],
                                 noValidate='novalidate',
                                 action="javascript:void(0);",
-                                style={
-                                   'display':'inline-block',
-                               },
-
-                        )]),
+                            )]),
 
                html.Br(),
 
@@ -308,12 +341,11 @@ def create_layout(encoded_data, file_name):
                            )]),
                        html.Div(
                         children=[
-                            html.P(style={
-                               'display':'inline-block',
-                                'padding':'5px'
-                           },
+                            html.P(
+                                className='info',
                                 children=['Type a number to set the slider value:  ']),
                             html.Form(
+                                className='form-inputer',
                                 children=[dcc.Input(
                                     id="value_p_slider_inputer", type="number", placeholder="0.05",
                                     min=0.000001,
@@ -321,15 +353,44 @@ def create_layout(encoded_data, file_name):
                                     step=0.000001,
                                     value=0.05,
                                     )],
-                                # noValidate='novalidate',
                                 action="javascript:void(0);",
-                                style={
-                                   'display':'inline-block',
-                               },
-
-                        )]),
+                            )]),
 
            ]),
+            html.Br(),
+            html.Div(
+                className='graph-setter',
+                children=[
+                dcc.Checklist(
+                    id='colorscheme-check',
+                    options=[{'label': 'Colorblind mode', 'value': 'yes'}]
+                ),
+
+                    html.P(
+                        id='text-point-size',
+                        children=['Point size:']),
+                html.Form(
+                    id='form-point-size',
+                    children=[dcc.Input(
+                    id="input-point-size", type="number", placeholder="6",
+                    min=0,
+                    max=30,
+                    step=0.5,
+                    value=6
+                    )],
+                    # noValidate='novalidate',
+                    action="javascript:void(0);"),
+                    html.A(id='link_interactive_graph', children='file.html', style = {'display': 'none'}),
+                    # html.P(
+                    #     id='text-dirfile',
+                    #     children=['Directory path for downloading interactive graph:']),
+                    # dcc.Input(id='input-download-filepath', type='text', placeholder='file path'),
+                    # html.Button(id='download', children='download'),
+                    html.Button(id='download-server-client', children='Export'),
+                    dcc.Location(id='url', refresh=False)
+
+                ]),
+
             dcc.Loading(className='dashbio-loading', style={'height': '450px'}, children=[
                dcc.Graph(
                    id='my-dashbio-volcanoplot',
@@ -344,12 +405,13 @@ def create_layout(encoded_data, file_name):
                         ),
         ]
         ),
+        ]),
 
         html.Br(),
         html.Div(
             children=[
                 html.Div(
-                    style={'margin-top': '30px'},
+                    className='summary-table',
                     children=[
                     html.H6('Summary table'),
                     dash_table.DataTable(
@@ -366,19 +428,15 @@ def create_layout(encoded_data, file_name):
         # table for data from lasso selection
 
         html.Hr(
-            style={
-            'border': None,
-            'border-top': '3px double #bbb',
-            'overflow': 'visible',
-            'text-align': 'center',
-            'height': '5px',
-            'border-color': '#bbb'
-                    }
+            className='line',
                 ),
         html.H6('Table of selected proteins'),
         html.Div(
                  children=[
-                     html.Form(children = [dcc.Input(id="input_rows_per_page_1", type="number", placeholder="10",
+                     html.Div(children=[
+                     html.Button(className='reset_filtering', id='reset-filters-button_1', children='Reset filtering',
+                                 ),
+                     html.Form(className='form-inputer', children=[dcc.Input(id="input_rows_per_page_1", type="number", placeholder="10",
                         min=0,
                         max=250,
                         step=1,
@@ -391,6 +449,7 @@ def create_layout(encoded_data, file_name):
         ),
 
 
+                 ]),
 
                      dash_table.DataTable(
                         id='selected-data-table',
@@ -398,11 +457,11 @@ def create_layout(encoded_data, file_name):
                         page_size=10,
                         page_action='native',
                         export_headers='names',
-                        virtualization=True,
                         fixed_rows={'headers': True, 'data': 0},
-                         style_table={
-                             'overflowX': 'auto'
-                         },
+                         editable=False,
+                         sort_action="native",
+                         sort_mode="multi",
+                         page_current=0,
                          style_cell={
                              'height': 'auto',
                              # all three widths are needed
@@ -416,25 +475,19 @@ def create_layout(encoded_data, file_name):
 
         ),
         html.Br(),
+        html.Br(),
         html.Hr(
-            style={
-            'border': None,
-            'border-top': '3px double #bbb',
-            'overflow': 'visible',
-            'text-align': 'center',
-            'height': '5px',
-            'border-color': '#bbb'
-                    }
+            className='line',
                 ),
         html.H6('Table for filtering proteins in the graph'),
         html.Div(
             children=[
                 html.Div(children=[
-                    html.Button(id='reset-filters-button', children='Reset filtering',  style={'display': 'inline-block',
-                                                                                               'margin-right': '5px'
-                                                                                               },
+                    html.Button(className='reset_filtering', id='reset-filters-button', children='Reset filtering',
                                 ),
-                    html.Form(children=[dcc.Input(id="input_rows_per_page_2", type="number", placeholder="10",
+                    html.Form(
+                        className='form-inputer',
+                        children=[dcc.Input(id="input_rows_per_page_2", type="number", placeholder="10",
                                             min=0,
                                             max=250,
                                             step=1,
@@ -445,7 +498,6 @@ def create_layout(encoded_data, file_name):
                                           ],
                          action="javascript:void(0);",
                          title='Rows per page in the table',
-                         style={'display': 'inline-block',}
                               ),
 
                                     ],
@@ -466,25 +518,21 @@ def create_layout(encoded_data, file_name):
                 page_action="native",
                 page_current=0,
                 page_size=10,
-                virtualization=True,
-                fixed_rows={'headers': True, 'data': 0},
-                style_table={
-                    'overflowX': 'auto'
-                            },
+                fixed_rows={'headers': True},
                 style_cell={
                     'height': 'auto',
                     # all three widths are needed
-                    'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                    'minWidth': '180px', 'maxWidth': '180px', 'width': '180px',
                     'whiteSpace': 'normal',
-                    'word-break' : 'break-all'
-                }
+                    'word-break': 'break-all'
+                },
             ),
 
             html.Div(id='datatable-interactivity-container')],
 
         ),
         html.Div(style={"display": "none"},
-                 children=[ dcc.Slider(
+                 children=[dcc.Slider(
             id='hide-slider',
             value=-np.log10(0.05),
             max=8,
@@ -502,7 +550,7 @@ def create_layout(encoded_data, file_name):
 
 def define_callbacks():
     '''
-    Function which coll alldefined callbacks
+    Function which call all defined callbacks
     '''
 
     @app.callback(
@@ -543,11 +591,49 @@ def define_callbacks():
 
     @app.callback(
         [
+            dash.dependencies.Output('selected-data-table', "derived_virtual_data"),
+            dash.dependencies.Output('selected-data-table', "derived_virtual_indices"),
+            dash.dependencies.Output('selected-data-table', "derived_virtual_selected_rows"),
+            dash.dependencies.Output('selected-data-table', "derived_virtual_selected_row_ids"),  #
+            dash.dependencies.Output('selected-data-table', "selected_rows"),
+            dash.dependencies.Output('selected-data-table', "derived_filter_query_structure"),#
+            dash.dependencies.Output('selected-data-table', "filter_query"),#
+        ],
+        [
+            dash.dependencies.Input('reset-filters-button_1', 'n_clicks'),
+            dash.dependencies.Input('upload-data', 'contents'),
+        ],
+        [dash.dependencies.State('hide-slider', "value"),]
+    )
+    def reset_filtering_selected_table(reset_button, upload_data, hide_slider):
+        """
+        Function which reset all parameters of components in case it's not output of some else function. The parameters
+        are reset, when new data are upload or the form is changed or reset filtering with button.
+        :param reset_button: number - number of clicks to button, used to for updating aplication, when it is clicked ane all filtering is removed
+        :param upload_data: string - data encoded by base64, changed with new uploaded data
+        :param hide_slider: value of invisible slider is used, for making something like buffer
+        :return: list of parameters of components
+        """
+
+        selected_rows = []
+        derived_virtual_data = []
+        derived_virtual_indices = []
+        derived_virtual_selected_rows = []
+        derived_virtual_selected_row_ids = []
+        derived_filter_query_structure = {}
+        filter_query = ''
+        return [derived_virtual_data, derived_virtual_indices, derived_virtual_selected_rows, derived_virtual_selected_row_ids, selected_rows, derived_filter_query_structure, filter_query]
+
+    @app.callback(
+        [
          dash.dependencies.Output('my-dashbio-volcanoplot', 'selectedData'),
          dash.dependencies.Output('reset-filters-button', 'n_clicks'),
          dash.dependencies.Output('logFC-dataset-dropdown', 'value'),
          dash.dependencies.Output('P-value-dataset-dropdown', 'value'),
-         dash.dependencies.Output('annotations_input', 'value')
+         dash.dependencies.Output('annotations_input', 'value'),
+         dash.dependencies.Output('numeric_columns', 'value'),
+         dash.dependencies.Output('annotations-topN', 'value'),
+         dash.dependencies.Output('input-number-topn', 'value')
          ],
         [dash.dependencies.Input('upload-data', 'contents')],
         [
@@ -555,11 +641,15 @@ def define_callbacks():
             dash.dependencies.State('reset-filters-button', 'n_clicks'),
             dash.dependencies.State('logFC-dataset-dropdown', 'value'),
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
-            dash.dependencies.State('annotations_input', 'value')
+            dash.dependencies.State('annotations_input', 'value'),
+            dash.dependencies.State('numeric_columns', 'value'),
+            dash.dependencies.State('annotations-topN', 'value'),
+            dash.dependencies.State('input-number-topn', 'value')
+
         ]
 
     )
-    def update_new_data(contents, selectedData,  filter_button, value_log_fc, value_p, value_annot):
+    def update_new_data(contents, selectedData,  filter_button, value_log_fc, value_p, value_annot, value_num_columns, annotations_topN, num_input_topN):
         """
         Function, which save in global vatiable new_data, that new data are uploaded and reset values of dropdowns in the form
         :param contents: string - data encoded by base64, changed with new uploaded data
@@ -568,6 +658,9 @@ def define_callbacks():
         :param value_log_fc: string - value of dropdown for logFC
         :param value_p: string - value of dropdown for p-value
         :param value_annot: string - value of dropdown for annotations
+        :param value_num_columns: list - dropdown's value set by user which define numeric columns
+        :param annotations_topN: string - chosed column for annotation topn proteins
+        :param num_input_topN: number - chosed number of topn annotated proteins
         :return: list of reseted parameters
         """
 
@@ -577,7 +670,10 @@ def define_callbacks():
         value_log_fc = None
         value_p = None
         value_annot = []
-        return [selectedData, filter_button, value_log_fc, value_p, value_annot]
+        value_num_columns = []
+        annotations_topN = []
+        num_input_topN = 10
+        return [selectedData, filter_button, value_log_fc, value_p, value_annot, value_num_columns, annotations_topN, num_input_topN]
 
 
     @app.callback(
@@ -713,12 +809,14 @@ def define_callbacks():
         return [options, value]
 
 
-
     @app.callback(
         [
             dash.dependencies.Output('logFC-dataset-dropdown', 'options'),
             dash.dependencies.Output('P-value-dataset-dropdown', 'options'),
-            dash.dependencies.Output('annotations_input', 'options')
+            dash.dependencies.Output('annotations_input', 'options'),
+            dash.dependencies.Output('numeric_columns', 'options'),
+            dash.dependencies.Output('annotations-topN', 'options'),
+
         ],
         [
             dash.dependencies.Input('hide-slider', "value"),
@@ -727,7 +825,6 @@ def define_callbacks():
         [
             dash.dependencies.State('upload-data', 'contents'),
             dash.dependencies.State('upload-data', 'filename'),
-            #dash.dependencies.State('separator-dropdown', 'value')
         ]
     )
     def update_dropdown(hide_slider, separ, contents, filename):
@@ -737,7 +834,7 @@ def define_callbacks():
         :param contents(string): get from upload data - data for reading csv - used in function read_csv.parse_contents
         :param filename(string): get from upload data - used in function read_csv.parse_contents
         :param separ(list of string): get from separator-dropdown - actual choose of separator, default is automatic
-        :return: option for all 3 dropdown (names of columns in the updated table)
+        :return: option for all 5 dropdowns (values are names of columns in the updated table)
         """
         if contents:
             contents = contents[0]
@@ -760,7 +857,8 @@ def define_callbacks():
                 }
                 for dset in df_no_nan_local.columns
             ]
-        return [option, option, option]
+        return [option, option, option, option, option]
+
 
     def enable_submit_button():
         """
@@ -777,6 +875,37 @@ def define_callbacks():
 
         return [disable_button, title, style]
 
+    @app.callback(
+        [
+            dash.dependencies.Output('input-number-topn', 'max')
+        ],
+        [
+            dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('separator-dropdown', 'value'),
+        ],
+        [
+
+            dash.dependencies.State('upload-data', 'contents'),
+            dash.dependencies.State('upload-data', 'filename'),
+        ]
+    )
+    def update_input_topn(hide_slider, separ, contents, filename):
+        """
+        Function set max number of possible topn annotations
+
+        :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
+        :param separ: list - get from separator-dropdown - actual choose of separator, default is automatic
+        :param contents: string - get from upload data - data for reading csv - used in function upload_data.parse_contents
+        :param filename: string - get from upload data - used in function read_csv.parse_contents
+        :return: list - value of max of topn annotations
+        """
+        if contents:
+            contents = contents[0]
+            filename = filename[0]
+            df = upload_data.parse_contents(contents, filename, separ)
+            max_num_topn = len(df.index)
+        return [max_num_topn]
+
 
     @app.callback(
         [
@@ -787,7 +916,7 @@ def define_callbacks():
             dash.dependencies.Output('submit-button', 'style')
         ],
         [
-            dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('hide-slider', 'value'),
             dash.dependencies.Input('logFC-dataset-dropdown', 'value'),
             dash.dependencies.Input('P-value-dataset-dropdown', 'value'),
             dash.dependencies.Input('input_zero_value_replace', 'value'),
@@ -848,28 +977,33 @@ def define_callbacks():
     Column for p-value is missing
     '''
                     if isinstance(df[col_name_logFC][0], str) or np.isnan(df[col_name_logFC][0]):
+                        str_show_logFC= ''
+                        str_show_logFC = df.loc[0:2, col_name_logFC].to_string(index=None)
                         df[col_name_logFC] = pd.to_numeric(df[col_name_logFC], errors='coerce')
                         df_no_nan = df.dropna(subset=[col_name_logFC])
                         df_no_nan = df_no_nan.reset_index(drop=True)
                         if df_no_nan.empty:
                             button = enable_submit_button()
                             children += '''
-    Selected column for log fold change should contain numbers
-    '''
+    There are no numbers in the selected log fold change column, please inspect, (provided: *{}*)
+    '''.format(str_show_logFC)
                 elif col_name_logFC is None:
                     button = enable_submit_button()
                     children += '''
     Column for log fold change is missing
     '''
                     if isinstance(df[col_name_p_value][0], str) or np.isnan(df[col_name_p_value][0]):
+                        str_show_pval = ''
+                        str_show_pval = df.loc[0:2, col_name_p_value].to_string(index=None)
                         df[col_name_p_value] = pd.to_numeric(df[col_name_p_value], errors='coerce')
                         df_no_nan = df.dropna(subset=[col_name_p_value])
                         df_no_nan = df_no_nan.reset_index(drop=True)
                         if df_no_nan.empty:
                             button = enable_submit_button()
                             children += '''
-    Selected column for p-value should contain numbers
-    '''
+    There are no numbers in the selected p-value column, please inspect, (provided: *{}*)
+    '''.format(str_show_pval)
+
                         elif not (df_no_nan[col_name_p_value] >= 0).all(axis=None):
                             button = enable_submit_button()
                             children += '''
@@ -888,23 +1022,27 @@ def define_callbacks():
     '''
                     if(isinstance(df[col_name_logFC][0], str) or isinstance(df[col_name_p_value][0], str) or np.isnan(df[col_name_p_value][0]) or np.isnan(df[col_name_logFC][0])):
                         if isinstance(df[col_name_logFC][0], str) or np.isnan(df[col_name_logFC][0]): #or vsechno nan?
+                            str_show_logFC = ''
+                            str_show_logFC = df.loc[0:2, col_name_logFC].to_string(index=None)
                             df[col_name_logFC] = pd.to_numeric(df[col_name_logFC], errors='coerce')
                             df_no_nan = df.dropna(subset=[col_name_logFC])
                             df_no_nan = df_no_nan.reset_index(drop=True)
                             if df_no_nan.empty:
                                 button = enable_submit_button()
                                 children += '''
-    Selected column for log fold change should contain numbers                            
-    '''
+    There are no numbers in the selected log fold change column, please inspect (provided: *{}*)
+    '''.format(str_show_logFC)
                         if isinstance(df[col_name_p_value][0], str) or  np.isnan(df[col_name_p_value][0]): #or nan?
+                            str_show_pval = ''
+                            str_show_pval = df.loc[0:2, col_name_p_value].to_string(index=None)
                             df[col_name_p_value] = pd.to_numeric(df[col_name_p_value], errors='coerce')
                             df_no_nan = df.dropna(subset=[col_name_p_value])
                             df_no_nan = df_no_nan.reset_index(drop=True)
                             if df_no_nan.empty:
                                 button = enable_submit_button()
                                 children += '''
-    Selected column for p-value should contain numbers                            
-    '''
+    There are no numbers in the selected p-value column, please inspect, (provided: *{}*)
+    '''.format(str_show_pval)
                             elif not (df_no_nan[col_name_p_value] >= 0).all(axis=None):
                                 button = enable_submit_button()
                                 children += '''
@@ -1065,7 +1203,7 @@ def define_callbacks():
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
         :param logFC_input_value: number - logFC inputed by dcc.Input, it is changing setting of logFC's slider
         :param contents: (string)  get from upload data - data for reading csv - used in function upload_data.parse_contents
-        :param filename(string): get from upload data - used in function read_csv.parse_contents
+        :param filename (string): get from upload data - used in function read_csv.parse_contents
         :param col_name_p_value:  (list of string) get from P-value-dataset-dropdown - used in function upload_data.parse_contents
         :param col_name_logFC: (list of string) get from logFC-dataset-dropdown - used in function upload_data.parse_contents
         :param separ(list of string): get from separator-dropdown - actual choose of separator, default is automatic
@@ -1163,10 +1301,13 @@ def define_callbacks():
             dash.dependencies.Output('datatable-interactivity', 'data'),
             dash.dependencies.Output('datatable-interactivity', 'columns'),
             dash.dependencies.Output('datatable-interactivity', 'filter_action'),
+            dash.dependencies.Output('datatable-interactivity', 'style_data_conditional')
         ],
         [
             dash.dependencies.Input('hidden-div', 'children'),
             dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('volcanoplot-input', 'value'),
+            dash.dependencies.Input('volcanoplot-input_p', 'value'),
         ],
         [
             dash.dependencies.State('upload-data', 'contents'),
@@ -1174,10 +1315,11 @@ def define_callbacks():
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
             dash.dependencies.State('logFC-dataset-dropdown', 'value'),
             dash.dependencies.State('separator-dropdown', 'value'),
-            dash.dependencies.State('input_zero_value_replace', 'value')
+            dash.dependencies.State('input_zero_value_replace', 'value'),
+            dash.dependencies.State('numeric_columns', 'value')
         ]
     )
-    def update_interactivity_table(hidden_div, hide_slider, contents, filename, col_name_p_value, col_name_logFC, separ, input_value):
+    def update_interactivity_table(hidden_div, hide_slider, threshold_logFC, threshold_P, contents, filename, col_name_p_value, col_name_logFC, separ, input_value, num_columns_option):
         """
         Function for updating interactivity table, which is used for filtering and selecting table.
         It's updated after clicking submit-button, it submit upload data, selected column for p-value and logFC, annotation
@@ -1187,12 +1329,15 @@ def define_callbacks():
 
         :param hidden_div: children of hidden_div; it's changed after uploading new data and reseting all components
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
+        :param threshold_logFC: list - two numbers - values of thresholds for logFC
+        :param threshold_P: number - threshold value for p-value
         :param contents: (string)  get from upload data - data for reading csv - used in function upload_data.parse_contents
         :param filename (string): get from upload data - used in function upload_data.parse_contents
         :param col_name_p_value: (list of string) get from P-value-dataset-dropdown - used in function upload_data.parse_contents
         :param col_name_logFC (list of string): get from logFC-dataset-dropdown - used in function upload_data.parse_contents
         :param separ (list of string): get from separator-dropdown - actual choose of separator, default is automatic - used in function upload_data.parse_contents
         :param input_value: number - inputed number in the form for replacing zeros p-values in the dataset
+        :param num_columns_option: list - dropdowm's value from form, columns specified as numeric by user
         :return: interactive table with actual data from uploaded data, table columns from uploaded table for interactive table, type of filter action
         """
         global old_data
@@ -1201,20 +1346,36 @@ def define_callbacks():
             if contents:
                 df_no_nan_local = upload_data.get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_value)
                 filter_action = "native"
+
+                df_no_nan_local['Significance'] = find_category(df_no_nan_local, col_name_p_value, col_name_logFC,
+                                                                threshold_logFC, threshold_P)
+
+                dict_type_format = formatter.table_formatting(df_no_nan_local, num_columns_option)
+
+                style_data_conditional =[{
+                        'if': {
+                            'column_type': 'text'
+                        },
+                        'textAlign': 'left',
+                        'padding-left': '5px'
+                }]
+
+
             else:
                 df_no_nan_local = pd.DataFrame()
                 filter_action = "none"
-                filter_query = ''
+                style_data_conditional = []
+                dict_type_format = {}
         else:
             df_no_nan_local = pd.DataFrame()
             filter_action = "none"
+            style_data_conditional = []
+            dict_type_format = {}
+
+        table_columns = [{"name": i, "id": i, "hideable": 'first', **dict_type_format[i]} for i in df_no_nan_local.columns]
+        return [df_no_nan_local.to_dict('records'), table_columns, filter_action, style_data_conditional]
 
 
-        # table_columns = [{"name": i, "id": i, "hideable": 'first', 'type': 'numeric', 'format' : Format(precision = 4)} for i in df_no_nan_local.columns]
-        table_columns = [{"name": i, "id": i, "hideable": 'first', 'type': 'text'} for i in df_no_nan_local.columns]
-
-
-        return [df_no_nan_local.to_dict('records'), table_columns, filter_action]
 
 
     @app.callback(
@@ -1242,7 +1403,7 @@ def define_callbacks():
 
         :param hidden_div: children of hidden_div; it's changed after uploading new data and reseting all components
         :param threshold_logFC: (list of numbers) get from rangeslider volcanoplot-input - used for summation proteins in categories
-        :param threshold_P_log10 (number): get from slider volcanoplot-input_p -  used for summation proteins in categories
+        :param threshold_P (number): get from slider volcanoplot-input_p -  used for summation proteins in categories
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
         :param contents (string): get from upload data - data for reading csv - used in function upload_data.parse_contents
         :param filename (string): get from upload data - used in function upload_data.parse_contents
@@ -1263,7 +1424,6 @@ def define_callbacks():
         if old_data==None and new_data != None or old_data == new_data:
             if contents:
                 df_no_nan_local = upload_data.get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_value)
-
                 for index, row in df_no_nan_local.iterrows():
 
                     if row[col_name_logFC] < threshold_logFC[1] and row[col_name_logFC] > threshold_logFC[0] and -np.log10(
@@ -1282,6 +1442,7 @@ def define_callbacks():
                 return category_table.to_dict('records')
             else:
                 return category_table.to_dict('records')
+
         else:
             return category_table.to_dict('records')
 
@@ -1289,12 +1450,16 @@ def define_callbacks():
     @app.callback(
         [
             dash.dependencies.Output('selected-data-table', 'data'),
-            dash.dependencies.Output('selected-data-table', 'columns')
+            dash.dependencies.Output('selected-data-table', 'columns'),
+            dash.dependencies.Output('selected-data-table', 'filter_action'),
+            dash.dependencies.Output('selected-data-table', 'style_data_conditional')
         ],
         [
             dash.dependencies.Input('hidden-div', 'children'),
             dash.dependencies.Input('my-dashbio-volcanoplot', 'selectedData'),
             dash.dependencies.Input('hide-slider', "value"),
+            dash.dependencies.Input('volcanoplot-input', 'value'),
+            dash.dependencies.Input('volcanoplot-input_p', 'value'),
         ],
         [
             dash.dependencies.State('upload-data', 'contents'),
@@ -1302,11 +1467,12 @@ def define_callbacks():
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
             dash.dependencies.State('logFC-dataset-dropdown', 'value'),
             dash.dependencies.State('separator-dropdown', 'value'),
-            dash.dependencies.State('input_zero_value_replace', 'value')
+            dash.dependencies.State('input_zero_value_replace', 'value'),
+            dash.dependencies.State('numeric_columns', 'value')
         ]
     )
-    def update_select_data_table(hidden_div, selectedData, hide_slider, contents, filename, col_name_p_value, col_name_logFC, separ,
-                                 input_value):
+    def update_select_data_table(hidden_div, selectedData, hide_slider, threshold_logFC, threshold_P, contents, filename, col_name_p_value, col_name_logFC, separ,
+                                 input_value, num_columns_option):
         """
         Function for updating selected data table where written the data from lasso or box select in the graph
         It's updated after clicking submit-button (it submit upload data,selected separator and selected column for p-value and logFC, annotation
@@ -1316,12 +1482,15 @@ def define_callbacks():
         :param hidden_div: children of hidden_div; it's changed after uploading new data and reseting all components
         :param selectedData (dict of lists): get from selected-data-table (property selectedData) - info from lasso/box select
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
+        :param threshold_logFC: list - two numbers - thresholds for logFC
+        :param threshold_P: number - threshold for p-value
         :param contents (string): get from upload data - data for reading csv - used in function upload_data.parse_contents
         :param filename (string): get from upload data - used in function upload_data.parse_contents
         :param col_name_p_value (list of string): get from P-value-dataset-dropdown - used in function upload_data.parse_contents
         :param col_name_logFC (list of string): get from logFC-dataset-dropdown - used in function upload_data.parse_contents
         :param separ (list of string): get from separator-dropdown - actual choose of separator, default is automatic - used in function upload_data.parse_contents
         :param input_value: number - inputed number in the form for replacing zeros p-values in the dataset
+        :param num_columns_option: list - dropdowm's value from form, columns specified as numeric by user
         :return: (list of string) datable containing rows of proteins which was selected by lasso/box selection
         """
         global old_data
@@ -1329,6 +1498,18 @@ def define_callbacks():
         if old_data == None and new_data != None or old_data == new_data:
             if contents:
                 df_no_nan_local = upload_data.get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_value)
+                filter_action = "native"
+
+                df_no_nan_local['Significance'] = find_category(df_no_nan_local, col_name_p_value, col_name_logFC, threshold_logFC, threshold_P)
+
+                dict_type_format = formatter.table_formatting(df_no_nan_local, num_columns_option)
+                style_data_conditional = [{
+                    'if': {
+                        'column_type': 'text'
+                    },
+                    'textAlign': 'left',
+                    'padding-left': '5px'
+                }]
 
                 index_list = []
                 selected_table = pd.DataFrame(columns=[i for i in df_no_nan_local.columns])
@@ -1350,21 +1531,131 @@ def define_callbacks():
                                 selected_table_local, df_no_nan_local, selectedData, col_name_logFC, i, index_list)
                 else:
                     selected_table_local = pd.DataFrame(columns=[i for i in df_no_nan_local.columns])
-
-                table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
-
-                return [selected_table_local.to_dict('records'), table_columns]
+                table_columns = [{"name": i, "id": i, "hideable": 'first', **dict_type_format[i]} for i in
+                                 df_no_nan_local.columns]
+                return [selected_table_local.to_dict('records'), table_columns, filter_action, style_data_conditional]
 
             else:
                 df_no_nan_local = pd.DataFrame()
-                table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
-                return [df_no_nan_local.to_dict('records'), table_columns]
+                filter_action = "none"
+                style_data_conditional = []
+                dict_type_format = {}
+                table_columns = [{"name": i, "id": i, "hideable": 'first', **dict_type_format[i]} for i in
+                                 df_no_nan_local.columns]
+                return [df_no_nan_local.to_dict('records'), table_columns, filter_action, style_data_conditional]
         else:
             df_no_nan_local = pd.DataFrame()
-            table_columns = [{"name": i, "id": i, 'hideable': 'first'} for i in df_no_nan_local.columns]
-            return [df_no_nan_local.to_dict('records'), table_columns]
+            filter_action = "none"
+            style_data_conditional = []
+            dict_type_format = {}
+
+            table_columns = [{"name": i, "id": i, "hideable": 'first', **dict_type_format[i]} for i in
+                             df_no_nan_local.columns]
+            return [df_no_nan_local.to_dict('records'), table_columns, filter_action, style_data_conditional]
 
 
+
+    def find_category(df, col_name_p_value, col_name_logFC, threshold_logFC, threshold_P):
+        """
+        Function define new column to datatables. Column contain info in which category proteins are. Category is defined
+        by p-value, log fold change and thresholds for p-value and logFC of protein
+        :param df: dataframe - data
+        :param col_name_p_value: string - name of column with p-values
+        :param col_name_logFC: string - name of column with logFC
+        :param threshold_logFC: list - contain two numebers - thresholds for logFC
+        :param threshold_P: number - threshold for p value
+        :return category_list: list (new column) containing defined categories for each protein (row)
+        """
+        category_list =[]
+        threshold_P_log10 = -np.log10(threshold_P)
+
+        for index, row in df.iterrows():
+
+            if row[col_name_logFC] < threshold_logFC[1] and row[col_name_logFC] > threshold_logFC[0] and -np.log10(
+                    row[col_name_p_value]) > threshold_P_log10:
+                category_list.append('Significant')
+
+            elif row[col_name_logFC] > threshold_logFC[1] and -np.log10(row[col_name_p_value]) > threshold_P_log10:
+                category_list.append('Up&Sign')
+
+            elif row[col_name_logFC] < threshold_logFC[0] and -np.log10(row[col_name_p_value]) > threshold_P_log10:
+                category_list.append('Down&Sign')
+
+            else:
+                category_list.append('NotSign')
+
+        return category_list
+
+
+
+    @app.callback(
+        dash.dependencies.Output('link_interactive_graph', 'href'),
+        [dash.dependencies.Input('download-server-client', 'n_clicks')],
+        [
+            dash.dependencies.State('my-dashbio-volcanoplot', 'figure'),
+            dash.dependencies.State('link_interactive_graph', 'href'),
+        ]
+    )
+    def download_interactive_graph_and_delete_old_files(download_graph, graph_figure, location):
+        """
+        Function download html of interactive graph to server and delete old files and create link for users to download
+        graph.
+
+        Save html file to folder '.download' in folder where app is running.
+
+        :param download_graph: number - mnumber of clicks to button to download graph, when it's clicked this function is called
+        :param graph_figure: figure - graph which is  saved as html file
+        :param location: string - link to download graph by user
+        :return: location
+        """
+        filename = uuid.uuid4().hex
+
+        if not os.path.exists(UPLOAD_DIRECTORY):
+            os.makedirs(UPLOAD_DIRECTORY)
+
+        path = os.path.join(os.getcwd(), '.downloads')
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        print(path)
+        now = time.time()
+
+        for f in os.listdir(path):
+            f = os.path.join(path, f)
+            if os.stat(f).st_mtime < now - 86400 and f != os.path.join(path, '1.html'):
+
+                if os.path.isfile(f):
+                    os.remove(os.path.join(path, f))
+
+        filename = '.downloads' + os.path.sep + filename + '.html'
+        if graph_figure:
+            fig = go.Figure(graph_figure)
+            fig.write_html(filename)
+            location = "/download/{}".format(urlquote(filename))
+
+        return location
+
+    @app.callback(
+        dash.dependencies.Output('link_interactive_graph', 'title'),
+        [dash.dependencies.Input('link_interactive_graph', 'href')],
+        [
+         dash.dependencies.State('url', 'href'),
+         dash.dependencies.State('link_interactive_graph', 'title'),
+        ]
+        )
+    def open_browser(location, url, title):
+        """
+        Function open browser when new link to download is created. Link is created when button for downloading graph is clicked
+        :param location: string - link (location) to downloading graph choosed by user
+        :param url: string - url for downloading graph
+        :param title: string - used as variable for to be something on output
+        :return: title
+        """
+        if location:
+            path = url+location
+            webbrowser.open(path)
+
+        return title
 
 
     @app.callback(
@@ -1378,7 +1669,8 @@ def define_callbacks():
             dash.dependencies.Input('volcanoplot-input_p', 'value'),
             dash.dependencies.Input('volcanoplot-input', 'value'),
             dash.dependencies.Input('hide-slider', "value"),
-
+            dash.dependencies.Input('colorscheme-check', 'value'),
+            dash.dependencies.Input('input-point-size', 'value')
         ],
         [
             dash.dependencies.State('upload-data', 'contents'),
@@ -1387,19 +1679,24 @@ def define_callbacks():
             dash.dependencies.State('P-value-dataset-dropdown', 'value'),
             dash.dependencies.State('annotations_input', 'value'),
             dash.dependencies.State('separator-dropdown', 'value'),
-            dash.dependencies.State('input_zero_value_replace', 'value')
+            dash.dependencies.State('input_zero_value_replace', 'value'),
+            dash.dependencies.State('thresholds-topN', 'value'),
+            dash.dependencies.State('criterion-topN', 'value'),
+            dash.dependencies.State('input-number-topn', 'value'),
+            dash.dependencies.State('annotations-topN', 'value'),
         ]
 
     )
-    def update_graph(hidden_div, rows, indices, derived_virtual_selected_rows, effects_p, effects, hide_slider, contents, filename,
-                     col_name_logFC, col_name_p_value, annotations, separ, input_value):
+    def update_graph(hidden_div, rows, indices, derived_virtual_selected_rows, effects_p, effects, hide_slider, colorblind, point_size, contents, filename,
+                     col_name_logFC, col_name_p_value, annotations, separ, input_value, threshold_topN, criterion_topN, input_num_topN, annotations_topN):
         """
         Function for update graph.
         It's updated with change of inputs.
          -> It's updated after clicking submit-button (it submit upload data,selected separator and selected column for p-value and logFC, annotation
             from uploaded table)
-         -> It's updated with selecting rows in the interactivity table or with derived_virtual_data (I have to control how it works)
+         -> It's updated with selecting rows in the interactivity table or with derived_virtual_data
          ->It's updated after changing slider input for p value or logFC
+
 
          Function cooperate with interactivity table due to derived_virtual_data and derived_virtual_selected_rows.
 
@@ -1411,6 +1708,8 @@ def define_callbacks():
         :param effects_p (number): get from slider volcanoplot-input_p -  used for specification of volcanoplot property
         :param effects: (list of number) get from rangeslider volcanoplot-input - used for specification od volcanoplot property
         :param hide_slider: value of invisible slider is used, for making something like buffer, its changed when are uploaded new data
+        :param colorblind: string - value of checked box
+        :param point_size: number - set size of points in graph
         :param contents (string): get from upload data - data for reading csv - used in function upload_data.parse_contents
         :param filename (string): get from upload data - used in function read_csv.parse_contents
         :param col_name_p_value: (list of string) get from P-value-dataset-dropdown - used in function upload_data.parse_contents
@@ -1418,6 +1717,10 @@ def define_callbacks():
         :param annotations (string): get from multi choose dropdown annotations-input, it's used for text 'on  hover' - there are function annotation.call_update_annotation
         :param separ (list of string): get from separator-dropdown - actual choose of separator, default is automatic - used in function upload_data.parse_contents
         :param input_value: number - inputed number in the form for replacing zeros p-values in the dataset
+        :param threshold_topN: string - selected value in dropdown in the form - selection of threshold to find topN
+        :param criterion_topN: string - elected value in dropdown in the form - criterion to find topN
+        :param input_num_topN: number - number of topN hits
+        :param annotations_topN: string - name of column from data used to annotate topN proteins
         :return: (figure) it returns volcano plot
         """
         effects_p = -np.log10(effects_p)
@@ -1437,46 +1740,28 @@ def define_callbacks():
                 if dff.empty:
                     dff = df_no_nan_local
 
-                # color part
-                #############
-                category_color = []
-                significant_color = 'rgba(255,221,0)'
-                sign_up_color = 'rgba(255,0,0)'
-                sign_down_color = 'rgba(0,255,0)'
-                not_sign_color = 'rgba(0,170,255)'
+                colors = set_colors.set_color(dff, derived_virtual_selected_rows, col_name_logFC, col_name_p_value, effects, effects_p,
+                          colorblind)
+                if point_size is None:
+                    point_size = 6
 
-                for index, row in dff.iterrows():
-
-                    if row[col_name_logFC] <= effects[1] and row[col_name_logFC] >= effects[0] and -np.log10(
-                            row[col_name_p_value]) > effects_p:
-                        category_color.append(significant_color)
-
-                    elif row[col_name_logFC] > effects[1] and -np.log10(row[col_name_p_value]) > effects_p:
-                        category_color.append(sign_up_color)
-
-                    elif row[col_name_logFC] < effects[0] and -np.log10(row[col_name_p_value]) > effects_p:
-                        category_color.append(sign_down_color)
-
-                    else:
-                        category_color.append(not_sign_color)
-
-                colors = ['rgba(0,0,0)' if i in derived_virtual_selected_rows else category_color[i]
-                          for i in range(len(dff))]
-
-                point_sizes = [10 if i in derived_virtual_selected_rows else 6
-                               for i in range(len(dff))]
+                point_sizes = [point_size if i in derived_virtual_selected_rows else point_size for i in range(len(dff))]
                 arrow_x = []
                 arrow_y = []
 
-                for i in range(len(dff)):
-                    if i in derived_virtual_selected_rows:
-                        arrow_y.append(dff.loc[i]['logP'])
-                        arrow_x.append(dff.loc[i][col_name_logFC])
+                if len(derived_virtual_selected_rows) > 0:
+                    for i in derived_virtual_selected_rows:
+                        # if i in derived_virtual_selected_rows:
+                        dff_reset_index = dff
+                        dff_reset_index = dff_reset_index.reset_index(drop=True)
+                        arrow_y.append(dff_reset_index.loc[i]['logP'])
+                        arrow_x.append(dff_reset_index.loc[i][col_name_logFC])
 
                 #############
 
                 y_label_t = "-log10(" + col_name_p_value + ")"
                 [annotations_str, dff] = annotation.call_update_annotation(annotations, dff)
+                [topN_x, topN_y, topN_annotation_text] = annotation.find_topN(annotations_topN, dff, threshold_topN, criterion_topN, input_num_topN, col_name_logFC, 'logP', effects)
 
                 fig = dashbio.VolcanoPlot(
                     p=col_name_p_value,
@@ -1487,32 +1772,63 @@ def define_callbacks():
                     point_size=point_sizes,
                     col=colors,
                     genomewideline_value=effects_p,
+                    genomewideline_color='#000000',
                     effect_size_line=effects,
+                    effect_size_line_color='#000000',
+
                     highlight_color=None,
                     highlight=None,
                     annotation=annotations_str,
                     snp=None,
-                    gene=None)
+                    gene=None
+                )
 
-                for i in range(len(arrow_x)):
-                    fig.add_annotation(
-                        x=arrow_x[i],
-                        y=arrow_y[i],
-                    )
+                if arrow_x:
+                    for i in range(len(arrow_x)):
+                        fig.add_annotation(
+                            x=arrow_x[i],
+                            y=arrow_y[i],
+                        )
 
-                fig.update_annotations(dict(
-                    xref="x",
-                    yref="y",
-                    arrowsize=1,
-                    arrowwidth=2,
-                    showarrow=True,
-                    arrowhead=2, #shape of arrowhead
-                    startarrowsize=5,
-                    ax=20,
-                    ay=-30,
-                    opacity=0.8
-                ))
+                    fig.update_annotations(dict(
+                        xref="x",
+                        yref="y",
+                        arrowsize=1,
+                        arrowwidth=2,
+                        showarrow=True,
+                        arrowhead=2, #shape of arrowhead
+                        startarrowsize=5,
+                        ax=20,
+                        ay=-30,
+                        opacity=1,
+                        arrowcolor='#000000'
+                    ))
 
+                if topN_x:
+                    for i in range(len(topN_x)):
+                        fig.add_annotation(
+                            x=topN_x[i],
+                            y=topN_y[i],
+                            text=topN_annotation_text[i]
+                        )
+
+                    fig.update_annotations(dict(
+                        xref="x",
+                        yref="y",
+                        arrowsize=1,
+                        arrowwidth=2,
+                        showarrow=True,
+                        arrowhead=2, #shape of arrowhead
+                        startarrowsize=5,
+                        ax=20,
+                        ay=-30,
+                        opacity=1,
+                        arrowcolor='#000000',
+                    ))
+
+                fig.update_layout(plot_bgcolor='#ffffff')
+                fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#dbdbdb')
+                fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#dbdbdb')
                 return fig
 
             else:
@@ -1521,9 +1837,12 @@ def define_callbacks():
             return {'data': [], 'layout': {}, 'frames': []}
 
 
+
 if __name__ == '__main__':
     args = parser.parse_args()
     encoded_data, file_name = prepare_data(args.file_input)
     app.layout = create_layout(encoded_data, file_name)
     define_callbacks()
     app.run_server(debug=False)
+
+

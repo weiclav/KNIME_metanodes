@@ -24,13 +24,7 @@
 <config key="columnFilter">
 <entry key="filter-type" type="xstring" value="STANDARD"/>
 <config key="included_names">
-<entry key="array-size" type="xint" value="6"/>
-<entry key="0" type="xstring" value="Protein IDs"/>
-<entry key="1" type="xstring" value="Majority protein IDs"/>
-<entry key="2" type="xstring" value="Protein names"/>
-<entry key="3" type="xstring" value="Gene names"/>
-<entry key="4" type="xstring" value="logFc"/>
-<entry key="5" type="xstring" value="Pval"/>
+<entry key="array-size" type="xint" value="0"/>
 </config>
 <config key="excluded_names">
 <entry key="array-size" type="xint" value="0"/>
@@ -43,11 +37,11 @@
 </config>
 <config key="datatype">
 <config key="typelist">
-<entry key="org.knime.core.data.StringValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.BooleanValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.IntValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.DoubleValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.LongValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.StringValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.date.DateAndTimeValue" type="xboolean" value="false"/>
 </config>
 </config>
@@ -61,13 +55,7 @@
 <entry key="required" type="xboolean" value="true"/>
 <entry key="flowVariableName" type="xstring" value="column-filter"/>
 <config key="possibleColumns">
-<entry key="array-size" type="xint" value="6"/>
-<entry key="0" type="xstring" value="Protein IDs"/>
-<entry key="1" type="xstring" value="Majority protein IDs"/>
-<entry key="2" type="xstring" value="Protein names"/>
-<entry key="3" type="xstring" value="Gene names"/>
-<entry key="4" type="xstring" value="logFc"/>
-<entry key="5" type="xstring" value="Pval"/>
+<entry key="array-size" type="xint" value="0"/>
 </config>
 <entry key="type" type="xstring" value="Twinlist"/>
 <entry key="limit_number_visible_options" type="xboolean" value="false"/>
@@ -80,11 +68,11 @@
 </config>
 <config key="input_filter">
 <config key="type_filter">
-<entry key="org.knime.core.data.StringValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.BooleanValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.IntValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.DoubleValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.LongValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.StringValue" type="xboolean" value="false"/>
 <entry key="org.knime.core.data.time.localdatetime.LocalDateTimeValue" type="xboolean" value="false"/>
 </config>
 <entry key="allow_all_types" type="xboolean" value="true"/>

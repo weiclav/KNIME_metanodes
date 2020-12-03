@@ -12,7 +12,8 @@ def get_data(contents, filename, separ, col_name_p_value, col_name_logFC, input_
     :param separ (list of string): get from separator-dropdown - actual choose of separator, default is automatic - used in function upload_data.parse_contents
     :param col_name_p_value (list of string): get from P-value-dataset-dropdown - used in function upload_data.parse_contents
     :param col_name_logFC (list of string): get from logFC-dataset-dropdown - used in function upload_data.parse_contents
-    :return: dataframe - chnaged
+    :param input_value: number - value that replace zero p-value
+    :return: dataframe - changed
     """
     # print(contents)
     contents = contents[0]
@@ -28,6 +29,7 @@ def dataframe_edit(df, col_name_p_value, col_name_logFC, input_value):
     :param df: dataframe, where are drop NANs, reset index, defined new column logP
     :param col_name_p_value (list of string): get from P-value-dataset-dropdown - used in function upload_data.parse_contents
     :param col_name_logFC (list of string): get from logFC-dataset-dropdown - used in function upload_data.parse_contents
+    :param input_value: number - value that replace zero p-value
     :return: edit dataframe
     """
     if col_name_p_value is not None or col_name_logFC is not None:
@@ -94,6 +96,7 @@ def dataframe_edit(df, col_name_p_value, col_name_logFC, input_value):
         df_no_nan['logP'] = df_no_nan[col_name_p_value].apply(lambda x: -np.log10(x))
 
     return df_no_nan
+
 
 
 def parse_contents(contents, filename, separ):
