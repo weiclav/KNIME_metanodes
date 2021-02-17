@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<entry key="script" type="xstring" value="#libraries%%00010library(plotly)%%00010library(gprofiler2)%%00010%%00010# data input - GENE names column %%00010data &lt;-as.data.frame(knime.in, stringsAsFactors = FALSE)%%00010# convert gene names from factors (default by R) to strings%%00010data[] &lt;- lapply(data, as.character)%%00010%%00010# take only the first value before the delimiter; convert it to strings%%00010delimiter &lt;- knime.flow.in[[&quot;delimiter&quot;]]%%00010#query_names &lt;- as.data.frame(sapply(strsplit(data[,1], delimiter), '[', 1))%%00010#query_names[] &lt;- lapply(query_names, as.character)%%00010colnames(data) &lt;- c(&quot;QUERY_NAME&quot;)%%00010%%00010# organism%%00010organism_input &lt;- knime.flow.in[[&quot;organism&quot;]]%%00010%%00010# evidences%%00010evidences &lt;- as.logical(knime.flow.in[[&quot;evidences&quot;]])%%00010%%00010# IEA exclusion%%00010IEA_exclude &lt;- as.logical(knime.flow.in[[&quot;IEA&quot;]])%%00010%%00010# sources%%00010sources &lt;- knime.flow.in[[&quot;sources&quot;]]%%00010if (sources == &quot;all&quot;) {%%00010%%00009sources &lt;- NULL%%00010} else {%%00010%%00009sources &lt;- as.character(sources) %%00010}%%00010%%00010# pvalue threshold%%00010pvalue_threshold &lt;- knime.flow.in[[&quot;pvalue_threshold&quot;]]%%00010%%00010# significant or all to retrieve%%00010significant &lt;- as.logical(knime.flow.in[[&quot;significant&quot;]])%%00010%%00010# correction method%%00010correction &lt;- as.character(knime.flow.in[[&quot;correction&quot;]])%%00010%%00010# run gene ontology%%00010gene_ontology &lt;- gost(data$QUERY_NAME, organism = organism_input , ordered_query = FALSE,%%00010     multi_query = FALSE, significant = significant, exclude_iea = IEA_exclude,%%00010     measure_underrepresentation = FALSE, evcodes = evidences,%%00010     user_threshold = pvalue_threshold, correction_method = correction,%%00010     domain_scope = c(&quot;annotated&quot;), custom_bg = NULL,%%00010     numeric_ns = &quot;&quot;, sources = sources)%%00010%%00010"/>
+<entry key="templateUUID" type="xstring" isnull="true" value=""/>
+<entry key="version" type="xstring" value="version 1.x"/>
+<entry key="Output non numbers (NaN, Inf, -Inf) as missing cells" type="xboolean" value="false"/>
+<entry key="sendRowNames" type="xboolean" value="true"/>
+<entry key="sendBatchSize" type="xint" value="10000"/>
+<entry key="knimeInType" type="xstring" value="data.frame"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="IDLE"/>
+<entry key="factory" type="xstring" value="org.knime.r.TableToRNodeFactory"/>
+<entry key="node-name" type="xstring" value="Table to R"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME R-Project nodes"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.r"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="4.1.1.v202001312017"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Interactive R Statistics Integration"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.r.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="4.1.1.v202001312017"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="Table to R"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>

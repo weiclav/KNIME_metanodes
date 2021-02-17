@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<config key="variable-filter">
+<entry key="filter-type" type="xstring" value="STANDARD"/>
+<config key="included_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="excluded_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<entry key="enforce_option" type="xstring" value="EnforceInclusion"/>
+<config key="name_pattern">
+<entry key="pattern" type="xstring" value=""/>
+<entry key="type" type="xstring" value="Wildcard"/>
+<entry key="caseSensitive" type="xboolean" value="true"/>
+</config>
+</config>
+<entry key="variable-prefix" type="xstring" isnull="true" value=""/>
+<config key="port-names">
+<entry key="array-size" type="xint" value="1"/>
+<entry key="0" type="xstring" value=""/>
+</config>
+<config key="port-descriptions">
+<entry key="array-size" type="xint" value="1"/>
+<entry key="0" type="xstring" value=""/>
+</config>
+<entry key="sub-node-description" type="xstring" value="Metanode for functional enrichment analysis and visualization based on the gene input based on R-package gprofiler2, an alternative to web interface (https://biit.cs.ut.ee/gprofiler/gost)%%00010%%00010Several information are retrieved:%%00010- gene ontology%%00010- KEGG pathways%%00010- Reactome pathways%%00010- WikiPathways%%00010- miRTarBase%%00010- TRANSFAC%%00010- Human Protein Atlas%%00010- CORUM%%00010- Human Phenotype Ontology%%00010%%00010Currently the g:GOST tool (functional profiling) for 1 query is supported.%%00010Please note, that for the proper displaying of the interactive gProfiler plot you should have both .html file and associated folder (e.g. gProfiler_plot_files) in one folder!%%00010%%00010=================%%00010%%00010Used programs and tools and their respective licenses at the time of the metanode creation. Version numbers and the licenses might differ based on your local installation. Please inspect your local installation and contact us if you can not locate your local version and or license terms.%%00010KNIME 4.1.1 (the KNIME nodes consists of the following GNU GPL 3.0 License. Licence terms are available here: https://www.knime.com/downloads/full-license)%%00010R 3.6.2 (the R consists of the following GNU General Public Licences. Licence terms are available here: https://www.r-project.org/Licenses/)%%00010%%00010R packages:%%00010plotly (the plotly consists of the following MIT license and License file. Licence terms are available here: https://cran.r-project.org/web/licenses/MIT and https://cran.r-project.org/web/packages/plotly/LICENSE)%%00010gprofiler2 (the gprofiler2 consists of the following GPL-2 | GPL-3 license. More information available here: https://cran.r-project.org/web/packages/gprofiler2/index.html)%%00010%%00010The metanode was created in KNIME 4.1.1 running inside the docker image (https://hub.docker.com/r/cfprot/knime/), tag 4.1.1a.%%00010%%00010Current gProfiler version: e99_eg46_p14_f929183, database updated on 07/02/2020%%00010=================%%00010%%00010This version of metanode is available under the GNU GPL 3.0 License, unless stated otherwise. The full version of the license terms is available at https://www.gnu.org/licenses/gpl.html.%%00010Version: 1.0.2 from 2020-04-08%%00010Contact person: Kristina Gomoryova (423436@mail.muni.cz)%%00010More information can be found at https://github.com/OmicsWorkflows/KNIME_metanodes"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<config key="nodecontainer_message">
+<entry key="type" type="xstring" value="WARNING"/>
+<entry key="message" type="xstring" value="Component does not have input data, execute upstream nodes first"/>
+</config>
+<entry key="isDeletable" type="xboolean" value="false"/>
+<entry key="factory" type="xstring" value="org.knime.core.node.workflow.virtual.subnode.VirtualSubNodeInputNodeFactory"/>
+<entry key="node-name" type="xstring" value="Component Input"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME Core API"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.core"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="4.1.1.v202002041125"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Core"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.base.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="4.1.1.v202002041126"/>
+<config key="factory_settings">
+<config key="port_0">
+<entry key="index" type="xint" value="0"/>
+<config key="type">
+<entry key="object_class" type="xstring" value="org.knime.core.node.BufferedDataTable"/>
+</config>
+</config>
+</config>
+<entry key="name" type="xstring" value="Component Input"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>
