@@ -123,7 +123,9 @@ def create_layout(encoded_data, file_name):
                                 children=html.Div([
                                     'Drag and Drop or ',
                                     html.A('Select Files'),
-                                    dcc.Markdown(id='upload-file-name', children=['''Uploaded file name: -'''])
+                                    dcc.Markdown(id='upload-file-name',
+                                                 className = 'dont-break-out',
+                                                 children=['''Uploaded file name: -'''])
 
                                 ]),
                                 contents=encoded_data,

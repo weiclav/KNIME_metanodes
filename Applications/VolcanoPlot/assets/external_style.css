@@ -5,6 +5,14 @@
     flex-wrap: wrap;
     
 }
+.dont-break-out {
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  word-break: break-word;
+
+}
 
 .form{
     width: 386px;
